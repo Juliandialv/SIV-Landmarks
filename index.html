@@ -1,917 +1,315 @@
 <!doctype html>
 <html lang="es">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>SIV Landmark Calibration</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-  <style>
-    /* Layout: herramienta de una pantalla; visor 3D a la izquierda, panel de procedimiento a la derecha (apilado en móvil). */
-    :root {
-      --bg: #E7ECED;
-      --surface: #F7F9F9;
-      --surface-2: #FFFFFF;
-      --ink: #142026;
-      --muted: #55676F;
-      --line: #C9D2D5;
-      --accent: #0E5A6E;
-      --accent-ink: #FFFFFF;
-      --accent-soft: #D3E5EA;
-      --viewer-top: #DDE4E6;
-      --viewer-bot: #C3CED2;
-      --skin: #DDBFA4;
-      --lm-sellion: #C98204;
-      --lm-right: #C8372A;
-      --lm-left: #1D8B50;
-      --ok: #1E7547;
-      --warn: #9A5A00;
-      --danger: #B42318;
-      --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-      --font-label: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
-      --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
-      --radius: 10px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #0F1619;
-        --surface: #161F23;
-        --surface-2: #1B262B;
-        --ink: #E3EBED;
-        --muted: #93A4AB;
-        --line: #2A3940;
-        --accent: #62B4C8;
-        --accent-ink: #061317;
-        --accent-soft: #1B363D;
-        --viewer-top: #1C272C;
-        --viewer-bot: #0E1417;
-        --skin: #C9AA8F;
-        --lm-sellion: #F0A62A;
-        --lm-right: #EF5B4B;
-        --lm-left: #40BD7B;
-        --ok: #4CC487;
-        --warn: #E7A748;
-        --danger: #F07A6B;
-        color-scheme: dark;
-      }
-    }
-
-    :root[data-theme="dark"] {
-      --bg: #0F1619;
-      --surface: #161F23;
-      --surface-2: #1B262B;
-      --ink: #E3EBED;
-      --muted: #93A4AB;
-      --line: #2A3940;
-      --accent: #62B4C8;
-      --accent-ink: #061317;
-      --accent-soft: #1B363D;
-      --viewer-top: #1C272C;
-      --viewer-bot: #0E1417;
-      --skin: #C9AA8F;
-      --lm-sellion: #F0A62A;
-      --lm-right: #EF5B4B;
-      --lm-left: #40BD7B;
-      --ok: #4CC487;
-      --warn: #E7A748;
-      --danger: #F07A6B;
-      color-scheme: dark;
-    }
-
-    html,
-    body {
-      height: 100%;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-body);
-      font-size: 14px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    [hidden] {
-      display: none !important;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-      color: inherit;
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .app {
-      height: 100%;
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 12px;
-      padding-left: max(16px, env(safe-area-inset-left, 0px));
-      padding-right: max(16px, env(safe-area-inset-right, 0px));
-      padding-block: 12px 16px;
-    }
-
-    /* ── Cabecera ─────────────────────────────────────── */
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px 16px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .brand-mark {
-      font-family: var(--font-label);
-      font-weight: 600;
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--accent-ink);
-      background: var(--accent);
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      text-wrap: balance;
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-label);
-      font-size: 12px;
-      letter-spacing: .04em;
-      padding: 3px 9px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .chip b {
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    .chip .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--muted);
-    }
-
-    .chip[data-state="ok"] .dot {
-      background: var(--ok);
-    }
-
-    .chip[data-state="local"] .dot {
-      background: var(--warn);
-    }
-
-    /* ── Área principal ───────────────────────────────── */
-    .main {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 12px;
-      min-height: 0;
-    }
-
-    .viewer {
-      position: relative;
-      min-height: 0;
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: linear-gradient(180deg, var(--viewer-top), var(--viewer-bot));
-      border: 1px solid var(--line);
-      touch-action: none;
-    }
-
-    .viewer canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .viewer[data-mode="annotate"] canvas {
-      cursor: crosshair;
-    }
-
-    .view-tag {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: color-mix(in srgb, var(--surface-2) 88%, transparent);
-      border: 1px solid var(--line);
-      font-family: var(--font-label);
-      font-size: 13px;
-      letter-spacing: .03em;
-      max-width: calc(100% - 24px);
-    }
-
-    .view-tag .swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex: none;
-    }
-
-    .view-tag small {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .viewer-hint {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 14px;
-      justify-content: center;
-      font-size: 12px;
-      color: var(--muted);
-      pointer-events: none;
-    }
-
-    .viewer-hint span {
-      background: color-mix(in srgb, var(--surface-2) 80%, transparent);
-      padding: 2px 8px;
-      border-radius: 4px;
-    }
-
-    .viewer-hint kbd {
-      font-family: var(--font-data);
-      font-size: 11px;
-      color: var(--ink);
-    }
-
-    .viewer-loading {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: color-mix(in srgb, var(--bg) 70%, transparent);
-      font-family: var(--font-label);
-      letter-spacing: .05em;
-      color: var(--ink);
-    }
-
-    .readout {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-family: var(--font-data);
-      font-size: 12px;
-      line-height: 1.6;
-      background: color-mix(in srgb, var(--surface-2) 90%, transparent);
-      border: 1px solid var(--line);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-variant-numeric: tabular-nums;
-      white-space: pre;
-    }
-
-    .panel {
-      min-height: 0;
-      overflow: auto;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      text-wrap: balance;
-    }
-
-    .panel p {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .eyebrow {
-      font-family: var(--font-label);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    .section {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .section+.section {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
-    }
-
-    /* Formularios */
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .field label {
-      font-family: var(--font-label);
-      font-size: 13px;
-      letter-spacing: .03em;
-      color: var(--ink);
-    }
-
-    .field input,
-    .field select {
-      background: var(--surface-2);
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 8px 10px;
-      width: 100%;
-    }
-
-    .field small {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .check {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      font-size: 13px;
-    }
-
-    .check input {
-      margin-top: 3px;
-      accent-color: var(--accent);
-    }
-
-    .form-error {
-      color: var(--danger);
-      font-size: 13px;
-    }
-
-    .notice {
-      font-size: 13px;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: var(--accent-soft);
-      color: var(--ink);
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .mono {
-      font-family: var(--font-data);
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Botones */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: 7px;
-      padding: 9px 14px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      font-weight: 500;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .btn:hover:not(:disabled) {
-      border-color: var(--accent);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--accent-ink);
-      border-color: var(--accent);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.08);
-    }
-
-    .btn:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .btn-block {
-      width: 100%;
-    }
-
-    .btn-small {
-      padding: 5px 10px;
-      font-size: 13px;
-    }
-
-    .btn-link {
-      background: none;
-      border: 0;
-      padding: 0;
-      color: var(--accent);
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 13px;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    /* Progreso */
-    .progress {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .progress-bar {
-      height: 6px;
-      border-radius: 3px;
-      background: var(--line);
-      overflow: hidden;
-    }
-
-    .progress-bar i {
-      display: block;
-      height: 100%;
-      background: var(--accent);
-      width: 0;
-      transition: width .3s;
-    }
-
-    .progress-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .progress-head strong {
-      font-size: 20px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .tag-practice {
-      font-family: var(--font-label);
-      font-size: 12px;
-      letter-spacing: .05em;
-      color: var(--warn);
-      border: 1px solid currentColor;
-      padding: 1px 7px;
-      border-radius: 4px;
-    }
-
-    /* Pasos (landmarks) */
-    .steps {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .step button {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 22px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      padding: 9px 10px;
-      border-radius: 7px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      cursor: pointer;
-    }
-
-    .step .num {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-family: var(--font-data);
-      font-size: 12px;
-      color: #fff;
-      background: var(--c);
-    }
-
-    .step .name {
-      font-weight: 500;
-    }
-
-    .step .state {
-      font-family: var(--font-label);
-      font-size: 12px;
-      letter-spacing: .04em;
-      color: var(--muted);
-    }
-
-    .step[data-state="current"] button {
-      border-color: var(--c);
-      box-shadow: inset 3px 0 0 var(--c);
-    }
-
-    .step[data-state="current"] .state {
-      color: var(--ink);
-    }
-
-    .step[data-state="done"] .state {
-      color: var(--ok);
-    }
-
-    .step[data-state="pending"] button {
-      cursor: default;
-    }
-
-    .step[data-state="pending"] .num {
-      background: var(--line);
-      color: var(--muted);
-    }
-
-    .lm-card {
-      display: grid;
-      grid-template-columns: 84px minmax(0, 1fr);
-      gap: 12px;
-      align-items: start;
-      padding: 12px;
-      border-radius: 8px;
-      background: var(--surface-2);
-      border: 1px solid var(--line);
-    }
-
-    .lm-card svg {
-      width: 84px;
-      height: auto;
-      color: var(--ink);
-    }
-
-    .lm-card h3 {
-      margin: 0 0 4px;
-      font-size: 15px;
-    }
-
-    .lm-card p {
-      font-size: 13px;
-    }
-
-    .lm-card p+p {
-      margin-top: 6px;
-    }
-
-    .controls-help {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 4px 12px;
-      font-size: 13px;
-      margin: 0;
-    }
-
-    .controls-help dt {
-      font-family: var(--font-data);
-      font-size: 12px;
-      color: var(--ink);
-    }
-
-    .controls-help dd {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    /* Tabla de resultados */
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--surface-2);
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 12px;
-    }
-
-    th,
-    td {
-      padding: 5px 8px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    th {
-      font-family: var(--font-label);
-      font-weight: 600;
-      letter-spacing: .03em;
-      color: var(--muted);
-    }
-
-    td.num {
-      font-family: var(--font-data);
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    textarea.export {
-      width: 100%;
-      min-height: 120px;
-      font-family: var(--font-data);
-      font-size: 11px;
-      background: var(--surface-2);
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 8px;
-    }
-
-    /* Superposiciones (tutorial, pausa) */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      display: grid;
-      place-items: center;
-      background: color-mix(in srgb, var(--bg) 55%, rgba(0, 0, 0, .45));
-      padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
-    }
-
-    .dialog {
-      width: min(1040px, 100%);
-      max-height: 100%;
-      overflow: auto;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .dialog h2 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-      text-wrap: balance;
-    }
-
-    .dialog>p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 70ch;
-    }
-
-    .tut-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .tut-card {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--surface-2);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .tut-card svg {
-      width: 100%;
-      height: 170px;
-      color: var(--ink);
-    }
-
-    .tut-card h3 {
-      margin: 0;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tut-card h3 .swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
-    .tut-card p {
-      margin: 0;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .tut-card .view {
-      font-family: var(--font-label);
-      font-size: 12px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .tut-foot {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .tut-foot .section+.section {
-      border-top: 0;
-      padding-top: 0;
-    }
-
-    .rules {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .rules b {
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    @media (max-width: 860px) {
-
-      html,
-      body {
-        height: auto;
-      }
-
-      .app {
-        height: auto;
-        min-height: 100%;
-      }
-
-      .main {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: 62vh auto;
-      }
-
-      .tut-grid,
-      .tut-foot {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .progress-bar i {
-        transition: none;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SIV Landmark Calibration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: herramienta de una pantalla; visor 3D a la izquierda, panel de procedimiento a la derecha (apilado en móvil). */
+:root {
+  --bg: #E7ECED;
+  --surface: #F7F9F9;
+  --surface-2: #FFFFFF;
+  --ink: #142026;
+  --muted: #55676F;
+  --line: #C9D2D5;
+  --accent: #0E5A6E;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D3E5EA;
+  --viewer-top: #DDE4E6;
+  --viewer-bot: #C3CED2;
+  --skin: #DDBFA4;
+  --lm-sellion: #C98204;
+  --lm-right: #C8372A;
+  --lm-left: #1D8B50;
+  --ok: #1E7547;
+  --warn: #9A5A00;
+  --danger: #B42318;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-label: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1619; --surface: #161F23; --surface-2: #1B262B; --ink: #E3EBED; --muted: #93A4AB;
+    --line: #2A3940; --accent: #62B4C8; --accent-ink: #061317; --accent-soft: #1B363D;
+    --viewer-top: #1C272C; --viewer-bot: #0E1417; --skin: #C9AA8F;
+    --lm-sellion: #F0A62A; --lm-right: #EF5B4B; --lm-left: #40BD7B;
+    --ok: #4CC487; --warn: #E7A748; --danger: #F07A6B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1619; --surface: #161F23; --surface-2: #1B262B; --ink: #E3EBED; --muted: #93A4AB;
+  --line: #2A3940; --accent: #62B4C8; --accent-ink: #061317; --accent-soft: #1B363D;
+  --viewer-top: #1C272C; --viewer-bot: #0E1417; --skin: #C9AA8F;
+  --lm-sellion: #F0A62A; --lm-right: #EF5B4B; --lm-left: #40BD7B;
+  --ok: #4CC487; --warn: #E7A748; --danger: #F07A6B;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app {
+  height: 100%;
+  display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px 16px;
+}
+
+/* ── Cabecera ─────────────────────────────────────── */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.brand-mark {
+  font-family: var(--font-label); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent-ink); background: var(--accent); padding: 3px 8px; border-radius: 4px;
+}
+.brand h1 { margin: 0; font-size: 16px; font-weight: 600; text-wrap: balance; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-label); font-size: 12px; letter-spacing: .04em;
+  padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.chip b { color: var(--ink); font-weight: 600; }
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.chip[data-state="ok"] .dot { background: var(--ok); }
+.chip[data-state="local"] .dot { background: var(--warn); }
+
+/* ── Área principal ───────────────────────────────── */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; min-height: 0; }
+
+.viewer {
+  position: relative; min-height: 0; border-radius: var(--radius); overflow: hidden;
+  background: linear-gradient(180deg, var(--viewer-top), var(--viewer-bot));
+  border: 1px solid var(--line);
+  touch-action: none;
+}
+.viewer canvas { display: block; width: 100%; height: 100%; }
+.viewer[data-mode="annotate"] canvas { cursor: crosshair; }
+.view-tag {
+  position: absolute; top: 12px; left: 12px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-2) 88%, transparent); border: 1px solid var(--line);
+  font-family: var(--font-label); font-size: 13px; letter-spacing: .03em;
+  max-width: calc(100% - 24px);
+}
+.view-tag .swatch { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.view-tag small { color: var(--muted); font-size: 12px; }
+.viewer-hint {
+  position: absolute; left: 12px; right: 12px; bottom: 12px;
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+  font-size: 12px; color: var(--muted); pointer-events: none;
+}
+.viewer-hint span { background: color-mix(in srgb, var(--surface-2) 80%, transparent); padding: 2px 8px; border-radius: 4px; }
+.viewer-hint kbd { font-family: var(--font-data); font-size: 11px; color: var(--ink); }
+.viewer-loading {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  font-family: var(--font-label); letter-spacing: .05em; color: var(--ink);
+}
+.readout {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--font-data); font-size: 12px; line-height: 1.6;
+  background: color-mix(in srgb, var(--surface-2) 90%, transparent); border: 1px solid var(--line);
+  padding: 6px 10px; border-radius: 6px; font-variant-numeric: tabular-nums; white-space: pre;
+}
+
+.panel {
+  min-height: 0; overflow: auto;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.panel h2 { margin: 0; font-size: 18px; font-weight: 600; text-wrap: balance; }
+.panel p { margin: 0; color: var(--muted); }
+.eyebrow {
+  font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+.section { display: flex; flex-direction: column; gap: 10px; }
+.section + .section { border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* Formularios */
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-family: var(--font-label); font-size: 13px; letter-spacing: .03em; color: var(--ink); }
+.field input, .field select {
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; width: 100%;
+}
+.field small { color: var(--muted); font-size: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; }
+.check input { margin-top: 3px; accent-color: var(--accent); }
+.form-error { color: var(--danger); font-size: 13px; }
+.notice { font-size: 13px; padding: 8px 10px; border-radius: 6px; background: var(--accent-soft); color: var(--ink); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+/* Botones */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 7px; padding: 9px 14px; border: 1px solid var(--line); background: var(--surface-2);
+  font-weight: 500; cursor: pointer; text-align: center;
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-block { width: 100%; }
+.btn-small { padding: 5px 10px; font-size: 13px; }
+.btn-link { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-decoration: underline; font-size: 13px; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Progreso */
+.progress { display: flex; flex-direction: column; gap: 6px; }
+.progress-bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.progress-bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+.progress-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.progress-head strong { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tag-practice { font-family: var(--font-label); font-size: 12px; letter-spacing: .05em; color: var(--warn); border: 1px solid currentColor; padding: 1px 7px; border-radius: 4px; }
+
+/* Pasos (landmarks) */
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.step button {
+  width: 100%; display: grid; grid-template-columns: 22px minmax(0,1fr) auto; align-items: center; gap: 10px;
+  text-align: left; padding: 9px 10px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer;
+}
+.step .num {
+  width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-data); font-size: 12px; color: #fff; background: var(--c);
+}
+.step .name { font-weight: 500; }
+.step .state { font-family: var(--font-label); font-size: 12px; letter-spacing: .04em; color: var(--muted); }
+.step[data-state="current"] button { border-color: var(--c); box-shadow: inset 3px 0 0 var(--c); }
+.step[data-state="current"] .state { color: var(--ink); }
+.step[data-state="done"] .state { color: var(--ok); }
+.step[data-state="pending"] button { cursor: default; }
+.step[data-state="pending"] .num { background: var(--line); color: var(--muted); }
+
+.lm-card { display: grid; grid-template-columns: 84px minmax(0,1fr); gap: 12px; align-items: start; padding: 12px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); }
+.lm-card svg { width: 84px; height: auto; color: var(--ink); }
+.lm-card h3 { margin: 0 0 4px; font-size: 15px; }
+.lm-card p { font-size: 13px; }
+.lm-card p + p { margin-top: 6px; }
+
+.controls-help { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 4px 12px; font-size: 13px; margin: 0; }
+.controls-help dt { font-family: var(--font-data); font-size: 12px; color: var(--ink); }
+.controls-help dd { margin: 0; color: var(--muted); }
+
+/* Tabla de resultados */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th, td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font-family: var(--font-label); font-weight: 600; letter-spacing: .03em; color: var(--muted); }
+td.num { font-family: var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+textarea.export { width: 100%; min-height: 120px; font-family: var(--font-data); font-size: 11px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+
+/* Superposiciones (tutorial, pausa) */
+.overlay {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 55%, rgba(0,0,0,.45));
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.dialog {
+  width: min(1040px, 100%); max-height: 100%; overflow: auto;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.dialog h2 { margin: 0; font-size: 22px; font-weight: 600; text-wrap: balance; }
+.dialog > p { margin: 0; color: var(--muted); max-width: 70ch; }
+.tut-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.tut-card { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.tut-card svg { width: 100%; height: 170px; color: var(--ink); }
+.tut-card h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.tut-card h3 .swatch { width: 10px; height: 10px; border-radius: 50%; }
+.tut-card p { margin: 0; font-size: 13px; color: var(--muted); }
+.tut-card .view { font-family: var(--font-label); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.tut-foot { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.tut-foot .section + .section { border-top: 0; padding-top: 0; }
+.rules { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+.rules b { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 860px) {
+  html, body { height: auto; }
+  .app { height: auto; min-height: 100%; }
+  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: 62vh auto; }
+  .tut-grid, .tut-foot { grid-template-columns: minmax(0, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .progress-bar i { transition: none; } }
+</style>
 
 </head>
-
 <body>
-  <!-- SVG reutilizables para tutorial y fichas -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <symbol id="sym-profile" viewBox="0 0 160 170">
-        <path
-          d="M38 162 C14 122 12 52 58 26 C94 7 126 24 128 56 C129 66 127 73 123 78 C128 88 137 99 142 109 C145 114 141 118 134 117 C131 119 133 124 132 128 C134 133 131 137 129 141 C128 150 118 158 104 162"
-          fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M86 92 C90 88 96 88 100 92" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
-          opacity=".6" />
-        <path d="M62 86 C56 76 58 66 64 64 C70 64 72 78 70 96 C69 104 64 106 62 100" fill="none" stroke="currentColor"
-          stroke-width="1.6" opacity=".45" />
-      </symbol>
-      <symbol id="sym-ear" viewBox="0 0 120 170">
-        <path
-          d="M66 156 C44 160 30 134 28 104 C25 62 40 20 72 16 C98 13 109 36 101 58 C96 72 86 74 84 66 C82 58 92 52 88 44 C82 36 62 40 56 60"
-          fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M50 74 C46 92 52 118 66 124 C76 128 84 122 86 114" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" />
-        <path d="M90 96 C97 98 99 108 95 116 C93 120 88 120 87 116" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round" />
-        <path d="M66 156 C72 150 70 140 66 132" fill="none" stroke="currentColor" stroke-width="1.6"
-          stroke-linecap="round" opacity=".6" />
-        <path d="M108 90 L118 90 M114 85 L119 90 L114 95" fill="none" stroke="currentColor" stroke-width="1.4"
-          stroke-linecap="round" opacity=".55" />
-      </symbol>
-    </defs>
-  </svg>
+<!-- SVG reutilizables para tutorial y fichas -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sym-profile" viewBox="0 0 160 170">
+      <path d="M38 162 C14 122 12 52 58 26 C94 7 126 24 128 56 C129 66 127 73 123 78 C128 88 137 99 142 109 C145 114 141 118 134 117 C131 119 133 124 132 128 C134 133 131 137 129 141 C128 150 118 158 104 162" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M86 92 C90 88 96 88 100 92" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+      <path d="M62 86 C56 76 58 66 64 64 C70 64 72 78 70 96 C69 104 64 106 62 100" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".45"/>
+    </symbol>
+    <symbol id="sym-ear" viewBox="0 0 120 170">
+      <path d="M66 156 C44 160 30 134 28 104 C25 62 40 20 72 16 C98 13 109 36 101 58 C96 72 86 74 84 66 C82 58 92 52 88 44 C82 36 62 40 56 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M50 74 C46 92 52 118 66 124 C76 128 84 122 86 114" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M90 96 C97 98 99 108 95 116 C93 120 88 120 87 116" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M66 156 C72 150 70 140 66 132" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+      <path d="M108 90 L118 90 M114 85 L119 90 L114 95" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
+    </symbol>
+  </defs>
+</svg>
 
-  <div class="app" id="app">
-    <header class="topbar">
-      <div class="brand">
-        <span class="brand-mark">SIV</span>
-        <h1>Anotación manual de landmarks craneales</h1>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">SIV</span>
+      <h1>Anotación manual de landmarks craneales</h1>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip" id="chip-rater" hidden></span>
+      <span class="chip" id="chip-sync" data-state="local"><span class="dot"></span><span id="chip-sync-text">Conectando…</span></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="viewer" id="viewer" data-mode="preview" aria-label="Visor 3D del modelo">
+      <div class="view-tag" id="view-tag"><span class="swatch" id="view-swatch" style="background: var(--muted)"></span><span id="view-tag-text">Cargando…</span></div>
+      <div class="readout" id="readout" hidden></div>
+      <div class="viewer-hint" id="viewer-hint">
+        <span><kbd>arrastrar</kbd> girar</span>
+        <span><kbd>rueda</kbd> zoom hacia el cursor</span>
+        <span><kbd>botón derecho</kbd> desplazar</span>
       </div>
-      <div class="chips" id="chips">
-        <span class="chip" id="chip-rater" hidden></span>
-        <span class="chip" id="chip-sync" data-state="local"><span class="dot"></span><span
-            id="chip-sync-text">Conectando…</span></span>
-      </div>
-    </header>
+      <div class="viewer-loading" id="viewer-loading" hidden>Cargando modelo…</div>
+    </section>
 
-    <main class="main">
-      <section class="viewer" id="viewer" data-mode="preview" aria-label="Visor 3D del modelo">
-        <div class="view-tag" id="view-tag"><span class="swatch" id="view-swatch"
-            style="background: var(--muted)"></span><span id="view-tag-text">Cargando…</span></div>
-        <div class="readout" id="readout" hidden></div>
-        <div class="viewer-hint" id="viewer-hint">
-          <span><kbd>arrastrar</kbd> girar</span>
-          <span><kbd>rueda</kbd> zoom hacia el cursor</span>
-          <span><kbd>botón derecho</kbd> desplazar</span>
-        </div>
-        <div class="viewer-loading" id="viewer-loading" hidden>Cargando modelo…</div>
-      </section>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </main>
+</div>
 
-      <aside class="panel" id="panel" aria-live="polite"></aside>
-    </main>
-  </div>
+<div class="overlay" id="overlay" hidden>
+  <div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"></div>
+</div>
 
-  <div class="overlay" id="overlay" hidden>
-    <div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"></div>
-  </div>
-
-  <script src="config.js"></script>
-  <script type="importmap">
+<script src="config.js"></script>
+<script type="importmap">
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -921,421 +319,421 @@
 }
 </script>
 
-  <script type="module">
-    import * as THREE from 'three';
-    import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    const APP_VERSION = '0.4.0';
-    const CONFIG = Object.assign({endpoint: '', token: '', pauseEvery: 20, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null}, window.SIV_CONFIG || {});
-    /* Encuadre inicial de cada vista. zoom: 1 = cabeza completa en pantalla; 2 = el doble de cerca.
-       center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
-       Se pueden sobrescribir desde config.js (views.sellion / views.tragion). */
-    const VIEW_SETTINGS = {
-      sellion: Object.assign({zoom: 1.45, center: [0.5, 0.5, 0.48]}, CONFIG.views.sellion || {}),
-      tragion: Object.assign({zoom: 1.45, center: [0.42, 0.5, 0.42]}, CONFIG.views.tragion || {}),
-    };
-    const DEMO_KEY = 'DEMO';
-    if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.endpoint || '')) CONFIG.endpoint = '';   // sin URL válida: modo local
+const APP_VERSION = '0.4.0';
+const CONFIG = Object.assign({ endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null }, window.SIV_CONFIG || {});
+/* Encuadre inicial de cada vista. zoom: 1 = cabeza completa en pantalla; 2 = el doble de cerca.
+   center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
+   Se pueden sobrescribir desde config.js (views.sellion / views.tragion). */
+const VIEW_SETTINGS = {
+  sellion: Object.assign({ zoom: 1.8, center: [0.5, 0.5, 0.48] }, CONFIG.views.sellion || {}),
+  tragion: Object.assign({ zoom: 1.45, center: [0.42, 0.5, 0.42] }, CONFIG.views.tragion || {}),
+};
+const DEMO_KEY = 'DEMO';
+if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.endpoint || '')) CONFIG.endpoint = '';   // sin URL válida: modo local
 
-    /* ── Aceleración del raycasting ─────────────────────────────────────── */
-    let BVH = null;
-    try {
-      BVH = await import('three-mesh-bvh');
-      THREE.BufferGeometry.prototype.computeBoundsTree = BVH.computeBoundsTree;
-      THREE.BufferGeometry.prototype.disposeBoundsTree = BVH.disposeBoundsTree;
-      THREE.Mesh.prototype.raycast = BVH.acceleratedRaycast;
-    } catch (e) {console.warn('BVH no disponible; se usa raycasting estándar', e);}
+/* ── Aceleración del raycasting ─────────────────────────────────────── */
+let BVH = null;
+try {
+  BVH = await import('three-mesh-bvh');
+  THREE.BufferGeometry.prototype.computeBoundsTree = BVH.computeBoundsTree;
+  THREE.BufferGeometry.prototype.disposeBoundsTree = BVH.disposeBoundsTree;
+  THREE.Mesh.prototype.raycast = BVH.acceleratedRaycast;
+} catch (e) { console.warn('BVH no disponible; se usa raycasting estándar', e); }
 
-    /* ── Landmarks (claves compatibles con el pipeline Python) ──────────── */
-    const LANDMARKS = [
-      {
-        key: 'sellion', id: 'sellion', label: 'Sellion', view: 'anterior', viewLabel: 'Vista frontal',
-        color: '--lm-sellion', symbol: 'sym-profile', marker: {x: 123, y: 78},
-        def: 'Punto más profundo del ángulo nasofrontal, en la línea media, donde la frente se une con el dorso de la nariz.',
-        tip: 'Si te ayuda, gira el modelo de perfil para ver mejor la concavidad.',
-      },
-      {
-        key: 'right tragion', id: 'tragion_der', label: 'Tragion derecho', view: 'right', viewLabel: 'Vista lateral derecha del paciente',
-        color: '--lm-right', symbol: 'sym-ear', marker: {x: 91, y: 92}, mirror: false,
-        def: 'Punto en la escotadura situada justo por encima del trago de la oreja derecha del paciente.',
-        tip: 'Derecha se refiere siempre al paciente, no a tu pantalla. La cara queda a la derecha de la imagen.',
-      },
-      {
-        key: 'left tragion', id: 'tragion_izq', label: 'Tragion izquierdo', view: 'left', viewLabel: 'Vista lateral izquierda del paciente',
-        color: '--lm-left', symbol: 'sym-ear', marker: {x: 91, y: 92}, mirror: true,
-        def: 'Punto en la escotadura situada justo por encima del trago de la oreja izquierda del paciente.',
-        tip: 'Izquierda se refiere al paciente. En esta vista la cara queda a la izquierda de la imagen.',
-      },
-    ];
-    for (const lm of LANDMARKS) {   // textos sobrescribibles desde config.js (landmarks.<id>)
-      const t = CONFIG.landmarks[lm.id] || {};
-      for (const k of ['label', 'viewLabel', 'def', 'tip']) if (typeof t[k] === 'string' && t[k].trim()) lm[k] = t[k];
-    }
-    /* Convención del pipeline SIV: X anterior, Y izquierda del paciente, Z superior */
-    const VIEW_DIRS = {anterior: [1, 0, 0], right: [0, -1, 0], left: [0, 1, 0]};
+/* ── Landmarks (claves compatibles con el pipeline Python) ──────────── */
+const LANDMARKS = [
+  {
+    key: 'sellion', id: 'sellion', label: 'Sellion', view: 'anterior', viewLabel: 'Vista frontal',
+    color: '--lm-sellion', symbol: 'sym-profile', marker: { x: 123, y: 78 },
+    def: 'Punto más profundo del ángulo nasofrontal, en la línea media, donde la frente se une con el dorso de la nariz.',
+    tip: 'Si te ayuda, gira el modelo de perfil para ver mejor la concavidad.',
+  },
+  {
+    key: 'right tragion', id: 'tragion_der', label: 'Tragion derecho', view: 'right', viewLabel: 'Vista lateral derecha del paciente',
+    color: '--lm-right', symbol: 'sym-ear', marker: { x: 91, y: 92 }, mirror: false,
+    def: 'Punto en la escotadura situada justo por encima del trago de la oreja derecha del paciente.',
+    tip: 'Derecha se refiere siempre al paciente, no a tu pantalla. La cara queda a la derecha de la imagen.',
+  },
+  {
+    key: 'left tragion', id: 'tragion_izq', label: 'Tragion izquierdo', view: 'left', viewLabel: 'Vista lateral izquierda del paciente',
+    color: '--lm-left', symbol: 'sym-ear', marker: { x: 91, y: 92 }, mirror: true,
+    def: 'Punto en la escotadura situada justo por encima del trago de la oreja izquierda del paciente.',
+    tip: 'Izquierda se refiere al paciente. En esta vista la cara queda a la izquierda de la imagen.',
+  },
+];
+for (const lm of LANDMARKS) {   // textos sobrescribibles desde config.js (landmarks.<id>)
+  const t = CONFIG.landmarks[lm.id] || {};
+  for (const k of ['label', 'viewLabel', 'def', 'tip']) if (typeof t[k] === 'string' && t[k].trim()) lm[k] = t[k];
+}
+/* Convención del pipeline SIV: X anterior, Y izquierda del paciente, Z superior */
+const VIEW_DIRS = { anterior: [1, 0, 0], right: [0, -1, 0], left: [0, 1, 0] };
 
-    const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    const $ = (id) => document.getElementById(id);
-    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
-    const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '');
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '');
 
-    function lmSvg(lm, size = 'card') {
-      const flip = lm.mirror ? ' transform="translate(120 0) scale(-1 1)"' : '';
-      const vb = lm.symbol === 'sym-profile' ? '0 0 160 170' : '0 0 120 170';
-      const mx = lm.mirror ? 120 - lm.marker.x : lm.marker.x;
-      const r = size === 'card' ? 6 : 5;
-      return `<svg viewBox="${vb}" role="img" aria-label="Esquema de ${esc(lm.label)}">
+function lmSvg(lm, size = 'card') {
+  const flip = lm.mirror ? ' transform="translate(120 0) scale(-1 1)"' : '';
+  const vb = lm.symbol === 'sym-profile' ? '0 0 160 170' : '0 0 120 170';
+  const mx = lm.mirror ? 120 - lm.marker.x : lm.marker.x;
+  const r = size === 'card' ? 6 : 5;
+  return `<svg viewBox="${vb}" role="img" aria-label="Esquema de ${esc(lm.label)}">
     <g${flip}><use href="#${lm.symbol}"/></g>
     <circle cx="${mx}" cy="${lm.marker.y}" r="${r + 5}" fill="none" stroke="var(${lm.color})" stroke-width="1.5" opacity=".6"/>
     <circle cx="${mx}" cy="${lm.marker.y}" r="${r}" fill="var(${lm.color})"/>
   </svg>`;
+}
+
+/* ── Utilidades ─────────────────────────────────────────────────────── */
+async function sha256Hex(buf) {
+  const d = await crypto.subtle.digest('SHA-256', buf);
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+function seededRandom(seedStr) {
+  let h = 1779033703 ^ seedStr.length;
+  for (let i = 0; i < seedStr.length; i++) { h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+  let a = h >>> 0;
+  return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function shuffle(arr, rnd) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+const progressKey = (code, session) => `sivlm:${code}:s${session}`;
+const OUTBOX_KEY = 'sivlm:outbox';
+
+/* ── Carga de modelos desde el manifest ─────────────────────────────── */
+let MANIFEST = null;
+const facesCache = new Map();   // ruta -> Promise<Uint32Array>
+const modelCache = new Map();   // ruta -> Promise<{positions, hash}>
+
+async function fetchBin(path) {
+  const res = await fetch(path, { cache: 'force-cache' });
+  if (!res.ok) throw new Error(`No se pudo descargar ${path} (HTTP ${res.status}).`);
+  if (path.endsWith('.b64.txt')) {   // variante en texto base64 (solo para alojamientos que no sirven binarios)
+    const s = atob((await res.text()).trim());
+    const u = new Uint8Array(s.length);
+    for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+    return u.buffer;
+  }
+  return res.arrayBuffer();
+}
+function getFaces(path) {
+  if (!facesCache.has(path)) facesCache.set(path, fetchBin(path).then((b) => new Uint32Array(b)));
+  return facesCache.get(path);
+}
+function getPositions(entry) {
+  if (!modelCache.has(entry.file)) {
+    modelCache.set(entry.file, fetchBin(entry.file).then(async (b) => {
+      const hash = await sha256Hex(b);
+      if (entry.sha256_bin && hash !== entry.sha256_bin) throw new Error(`El archivo ${entry.file} no coincide con su huella. Recarga la página.`);
+      return new Float32Array(b);
+    }));
+    // Mantener solo unos pocos modelos en memoria
+    if (modelCache.size > 4) modelCache.delete(modelCache.keys().next().value);
+  }
+  return modelCache.get(entry.file);
+}
+async function loadEntryGeometry(entry) {
+  const [pos, faces] = await Promise.all([getPositions(entry), getFaces(entry.faces)]);
+  if (pos.length !== entry.n_vertices * 3 || faces.length !== entry.n_faces * 3) throw new Error(`El modelo ${entry.code} tiene un tamaño inesperado.`);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));   // coordenadas del OBJ, sin transformar
+  g.setIndex(new THREE.BufferAttribute(faces, 1));                  // índices 0-based del OBJ
+  g.computeVertexNormals();
+  g.computeBoundingBox();
+  if (BVH) g.computeBoundsTree();
+  return g;
+}
+function prefetch(entry) { if (entry) { getPositions(entry).catch(() => {}); getFaces(entry.faces).catch(() => {}); } }
+
+/* ── Visor 3D ───────────────────────────────────────────────────────── */
+class Viewer {
+  constructor(el) {
+    this.el = el;
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setClearColor(0x000000, 0);
+    el.prepend(this.renderer.domElement);
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 5000);
+    this.camera.up.set(0, 0, 1);
+    this.scene.add(this.camera);
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x50606a, 1.15));
+    const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(0.35, 0.55, 1); this.camera.add(key);
+    const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-0.6, -0.2, -0.4); this.camera.add(rim);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true; this.controls.dampingFactor = 0.12;
+    this.controls.zoomToCursor = true; this.controls.rotateSpeed = 0.8;
+    this.material = new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar('--skin') || '#ddbfa4'), roughness: 0.62, metalness: 0.0, side: THREE.DoubleSide });
+    this.mesh = null; this.markers = new Map();
+    this.raycaster = new THREE.Raycaster(); this.raycaster.firstHitOnly = true;
+    this.hover = null;
+    new ResizeObserver(() => this.resize()).observe(el);
+    this.resize();
+    const loop = () => { this.controls.update(); this.renderer.render(this.scene, this.camera); requestAnimationFrame(loop); };
+    loop();
+  }
+  resize() {
+    const w = this.el.clientWidth || 1, h = this.el.clientHeight || 1;
+    this.renderer.setSize(w, h, false);
+    this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+  }
+  refreshTheme() {
+    this.material.color.set(cssVar('--skin') || '#ddbfa4');
+    for (const [k, m] of this.markers) m.material.color.set(cssVar(LANDMARKS.find((l) => l.key === k).color));
+  }
+  setGeometry(geom) {
+    if (this.mesh) { this.scene.remove(this.mesh); this.mesh.geometry.disposeBoundsTree?.(); this.mesh.geometry.dispose(); }
+    this.clearMarkers();
+    this.mesh = new THREE.Mesh(geom, this.material); // matriz identidad: coordenadas = coordenadas del archivo
+    this.scene.add(this.mesh);
+    const bb = geom.boundingBox;
+    this.center = bb.getCenter(new THREE.Vector3());
+    this.size = bb.getSize(new THREE.Vector3());
+    this.diag = this.size.length();
+    this.markerR = this.diag * 0.0045;
+    this.camera.near = this.diag * 0.005; this.camera.far = this.diag * 30; this.camera.updateProjectionMatrix();
+    this.controls.minDistance = this.diag * 0.08; this.controls.maxDistance = this.diag * 6;
+  }
+  setView(preset) {
+    const d = new THREE.Vector3(...VIEW_DIRS[preset]);
+    // Encuadre idéntico para todos los modelos y observadores; no depende de ningún landmark.
+    const vs = preset === 'anterior' ? VIEW_SETTINGS.sellion : VIEW_SETTINGS.tragion;
+    const bb = this.mesh.geometry.boundingBox;
+    const c = vs.center || [0.5, 0.5, 0.5];
+    const target = new THREE.Vector3(bb.min.x + c[0] * this.size.x, bb.min.y + c[1] * this.size.y, bb.min.z + c[2] * this.size.z);
+    const zoom = Math.max(0.3, Number(vs.zoom) || 1);
+    const dist = (this.diag * 0.5) / Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) / zoom;
+    this.controls.target.copy(target);
+    this.camera.position.copy(target).addScaledVector(d, dist);
+    this.camera.up.set(0, 0, 1);
+    this.camera.lookAt(target);
+    this.controls.update();
+  }
+  pick(clientX, clientY) {
+    if (!this.mesh) return null;
+    const r = this.renderer.domElement.getBoundingClientRect();
+    const ndc = new THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+    this.raycaster.setFromCamera(ndc, this.camera);
+    const hit = this.raycaster.intersectObject(this.mesh, false)[0];
+    if (!hit) return null;
+    const p = this.mesh.geometry.getAttribute('position');
+    const idx = [hit.face.a, hit.face.b, hit.face.c];
+    const verts = idx.map((i) => new THREE.Vector3().fromBufferAttribute(p, i));
+    const bary = new THREE.Triangle(...verts).getBarycoord(hit.point, new THREE.Vector3());
+    const bv = [bary.x, bary.y, bary.z];
+    const k = bv.indexOf(Math.max(...bv));
+    const n = hit.face.normal.clone();
+    if (n.dot(this.raycaster.ray.direction) > 0) n.negate();
+    return { point: hit.point.clone(), normal: n, faceIndex: hit.faceIndex, faceVerts: idx, bary: bv, nearestIndex: idx[k], nearest: verts[k] };
+  }
+  setHover(hit, colorVar) {
+    if (!hit) { if (this.hover) this.hover.visible = false; return; }
+    if (!this.hover) {
+      const r = this.markerR;
+      this.hover = new THREE.Mesh(new THREE.RingGeometry(r * 1.1, r * 1.8, 40), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false }));
+      this.scene.add(this.hover);
     }
-
-    /* ── Utilidades ─────────────────────────────────────────────────────── */
-    async function sha256Hex(buf) {
-      const d = await crypto.subtle.digest('SHA-256', buf);
-      return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    this.hover.material.color.set(cssVar(colorVar));
+    this.hover.visible = true;
+    this.hover.position.copy(hit.point).addScaledVector(hit.normal, this.markerR * 0.15);
+    this.hover.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hit.normal);
+  }
+  resetHover() { if (this.hover) { this.scene.remove(this.hover); this.hover.geometry.dispose(); this.hover = null; } }
+  setMarker(key, point) {
+    let m = this.markers.get(key);
+    if (!m) {
+      const lm = LANDMARKS.find((l) => l.key === key);
+      m = new THREE.Mesh(new THREE.SphereGeometry(this.markerR, 24, 16), new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar(lm.color)), roughness: 0.35, emissive: 0x111111 }));
+      this.scene.add(m); this.markers.set(key, m);
     }
-    function seededRandom(seedStr) {
-      let h = 1779033703 ^ seedStr.length;
-      for (let i = 0; i < seedStr.length; i++) {h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19);}
-      let a = h >>> 0;
-      return () => {a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296;};
+    m.position.copy(point);
+  }
+  clearMarkers() { for (const m of this.markers.values()) { this.scene.remove(m); m.geometry.dispose(); m.material.dispose(); } this.markers.clear(); this.resetHover(); }
+  cameraState() {
+    const p = this.camera.position, t = this.controls.target;
+    return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], dist: p.distanceTo(t), fov: this.camera.fov };
+  }
+}
+
+/* ── Estado ─────────────────────────────────────────────────────────── */
+const state = {
+  screen: 'setup',
+  rater: null,
+  practice: true,
+  queue: [], qi: 0,
+  current: null,
+  records: [], doneHashes: [],
+  modelsSinceBreak: 0,
+  showCoords: false,
+  totalReal: 0,
+};
+
+const viewer = new Viewer($('viewer'));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => viewer.refreshTheme());
+new MutationObserver(() => viewer.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+/* ── Envío de datos: Google Sheets, base de datos del artifact o solo local ── */
+const backend = {
+  kind: CONFIG.endpoint ? 'sheets' : 'local',
+  db: null, uid: null, downloads: null,
+  async init() {
+    if (this.kind === 'local' && window.claude?.use) {
+      try {
+        const [db, user, downloads] = await Promise.all([window.claude.use('db'), window.claude.use('user'), window.claude.use('downloads')]);
+        this.downloads = downloads;
+        const uid = user ? await user.id() : null;
+        if (db && uid) { this.db = db; this.uid = uid; this.kind = 'claude'; }
+      } catch (e) { console.warn('Capacidades no disponibles', e); }
     }
-    function shuffle(arr, rnd) {const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) {const j = Math.floor(rnd() * (i + 1));[a[i], a[j]] = [a[j], a[i]];} return a;}
-    const store = {
-      get(k) {try {const v = localStorage.getItem(k); return v ? JSON.parse(v) : null;} catch {return null;} },
-      set(k, v) {try {localStorage.setItem(k, JSON.stringify(v)); return true;} catch {return false;} },
-      del(k) {try {localStorage.removeItem(k);} catch { } },
-    };
-    const progressKey = (code, session) => `sivlm:${code}:s${session}`;
-    const OUTBOX_KEY = 'sivlm:outbox';
-
-    /* ── Carga de modelos desde el manifest ─────────────────────────────── */
-    let MANIFEST = null;
-    const facesCache = new Map();   // ruta -> Promise<Uint32Array>
-    const modelCache = new Map();   // ruta -> Promise<{positions, hash}>
-
-    async function fetchBin(path) {
-      const res = await fetch(path, {cache: 'force-cache'});
-      if (!res.ok) throw new Error(`No se pudo descargar ${path} (HTTP ${res.status}).`);
-      if (path.endsWith('.b64.txt')) {   // variante en texto base64 (solo para alojamientos que no sirven binarios)
-        const s = atob((await res.text()).trim());
-        const u = new Uint8Array(s.length);
-        for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
-        return u.buffer;
-      }
-      return res.arrayBuffer();
-    }
-    function getFaces(path) {
-      if (!facesCache.has(path)) facesCache.set(path, fetchBin(path).then((b) => new Uint32Array(b)));
-      return facesCache.get(path);
-    }
-    function getPositions(entry) {
-      if (!modelCache.has(entry.file)) {
-        modelCache.set(entry.file, fetchBin(entry.file).then(async (b) => {
-          const hash = await sha256Hex(b);
-          if (entry.sha256_bin && hash !== entry.sha256_bin) throw new Error(`El archivo ${entry.file} no coincide con su huella. Recarga la página.`);
-          return new Float32Array(b);
-        }));
-        // Mantener solo unos pocos modelos en memoria
-        if (modelCache.size > 4) modelCache.delete(modelCache.keys().next().value);
-      }
-      return modelCache.get(entry.file);
-    }
-    async function loadEntryGeometry(entry) {
-      const [pos, faces] = await Promise.all([getPositions(entry), getFaces(entry.faces)]);
-      if (pos.length !== entry.n_vertices * 3 || faces.length !== entry.n_faces * 3) throw new Error(`El modelo ${entry.code} tiene un tamaño inesperado.`);
-      const g = new THREE.BufferGeometry();
-      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));   // coordenadas del OBJ, sin transformar
-      g.setIndex(new THREE.BufferAttribute(faces, 1));                  // índices 0-based del OBJ
-      g.computeVertexNormals();
-      g.computeBoundingBox();
-      if (BVH) g.computeBoundsTree();
-      return g;
-    }
-    function prefetch(entry) {if (entry) {getPositions(entry).catch(() => { }); getFaces(entry.faces).catch(() => { });} }
-
-    /* ── Visor 3D ───────────────────────────────────────────────────────── */
-    class Viewer {
-      constructor(el) {
-        this.el = el;
-        this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.setClearColor(0x000000, 0);
-        el.prepend(this.renderer.domElement);
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 5000);
-        this.camera.up.set(0, 0, 1);
-        this.scene.add(this.camera);
-        this.scene.add(new THREE.HemisphereLight(0xffffff, 0x50606a, 1.15));
-        const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(0.35, 0.55, 1); this.camera.add(key);
-        const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-0.6, -0.2, -0.4); this.camera.add(rim);
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.enableDamping = true; this.controls.dampingFactor = 0.12;
-        this.controls.zoomToCursor = true; this.controls.rotateSpeed = 0.8;
-        this.material = new THREE.MeshStandardMaterial({color: new THREE.Color(cssVar('--skin') || '#ddbfa4'), roughness: 0.62, metalness: 0.0, side: THREE.DoubleSide});
-        this.mesh = null; this.markers = new Map();
-        this.raycaster = new THREE.Raycaster(); this.raycaster.firstHitOnly = true;
-        this.hover = null;
-        new ResizeObserver(() => this.resize()).observe(el);
-        this.resize();
-        const loop = () => {this.controls.update(); this.renderer.render(this.scene, this.camera); requestAnimationFrame(loop);};
-        loop();
-      }
-      resize() {
-        const w = this.el.clientWidth || 1, h = this.el.clientHeight || 1;
-        this.renderer.setSize(w, h, false);
-        this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
-      }
-      refreshTheme() {
-        this.material.color.set(cssVar('--skin') || '#ddbfa4');
-        for (const [k, m] of this.markers) m.material.color.set(cssVar(LANDMARKS.find((l) => l.key === k).color));
-      }
-      setGeometry(geom) {
-        if (this.mesh) {this.scene.remove(this.mesh); this.mesh.geometry.disposeBoundsTree?.(); this.mesh.geometry.dispose();}
-        this.clearMarkers();
-        this.mesh = new THREE.Mesh(geom, this.material); // matriz identidad: coordenadas = coordenadas del archivo
-        this.scene.add(this.mesh);
-        const bb = geom.boundingBox;
-        this.center = bb.getCenter(new THREE.Vector3());
-        this.size = bb.getSize(new THREE.Vector3());
-        this.diag = this.size.length();
-        this.markerR = this.diag * 0.0045;
-        this.camera.near = this.diag * 0.005; this.camera.far = this.diag * 30; this.camera.updateProjectionMatrix();
-        this.controls.minDistance = this.diag * 0.08; this.controls.maxDistance = this.diag * 6;
-      }
-      setView(preset) {
-        const d = new THREE.Vector3(...VIEW_DIRS[preset]);
-        // Encuadre idéntico para todos los modelos y observadores; no depende de ningún landmark.
-        const vs = preset === 'anterior' ? VIEW_SETTINGS.sellion : VIEW_SETTINGS.tragion;
-        const bb = this.mesh.geometry.boundingBox;
-        const c = vs.center || [0.5, 0.5, 0.5];
-        const target = new THREE.Vector3(bb.min.x + c[0] * this.size.x, bb.min.y + c[1] * this.size.y, bb.min.z + c[2] * this.size.z);
-        const zoom = Math.max(0.3, Number(vs.zoom) || 1);
-        const dist = (this.diag * 0.5) / Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) / zoom;
-        this.controls.target.copy(target);
-        this.camera.position.copy(target).addScaledVector(d, dist);
-        this.camera.up.set(0, 0, 1);
-        this.camera.lookAt(target);
-        this.controls.update();
-      }
-      pick(clientX, clientY) {
-        if (!this.mesh) return null;
-        const r = this.renderer.domElement.getBoundingClientRect();
-        const ndc = new THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
-        this.raycaster.setFromCamera(ndc, this.camera);
-        const hit = this.raycaster.intersectObject(this.mesh, false)[0];
-        if (!hit) return null;
-        const p = this.mesh.geometry.getAttribute('position');
-        const idx = [hit.face.a, hit.face.b, hit.face.c];
-        const verts = idx.map((i) => new THREE.Vector3().fromBufferAttribute(p, i));
-        const bary = new THREE.Triangle(...verts).getBarycoord(hit.point, new THREE.Vector3());
-        const bv = [bary.x, bary.y, bary.z];
-        const k = bv.indexOf(Math.max(...bv));
-        const n = hit.face.normal.clone();
-        if (n.dot(this.raycaster.ray.direction) > 0) n.negate();
-        return {point: hit.point.clone(), normal: n, faceIndex: hit.faceIndex, faceVerts: idx, bary: bv, nearestIndex: idx[k], nearest: verts[k]};
-      }
-      setHover(hit, colorVar) {
-        if (!hit) {if (this.hover) this.hover.visible = false; return;}
-        if (!this.hover) {
-          const r = this.markerR;
-          this.hover = new THREE.Mesh(new THREE.RingGeometry(r * 1.1, r * 1.8, 40), new THREE.MeshBasicMaterial({transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false}));
-          this.scene.add(this.hover);
-        }
-        this.hover.material.color.set(cssVar(colorVar));
-        this.hover.visible = true;
-        this.hover.position.copy(hit.point).addScaledVector(hit.normal, this.markerR * 0.15);
-        this.hover.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hit.normal);
-      }
-      resetHover() {if (this.hover) {this.scene.remove(this.hover); this.hover.geometry.dispose(); this.hover = null;} }
-      setMarker(key, point) {
-        let m = this.markers.get(key);
-        if (!m) {
-          const lm = LANDMARKS.find((l) => l.key === key);
-          m = new THREE.Mesh(new THREE.SphereGeometry(this.markerR, 24, 16), new THREE.MeshStandardMaterial({color: new THREE.Color(cssVar(lm.color)), roughness: 0.35, emissive: 0x111111}));
-          this.scene.add(m); this.markers.set(key, m);
-        }
-        m.position.copy(point);
-      }
-      clearMarkers() {for (const m of this.markers.values()) {this.scene.remove(m); m.geometry.dispose(); m.material.dispose();} this.markers.clear(); this.resetHover();}
-      cameraState() {
-        const p = this.camera.position, t = this.controls.target;
-        return {pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], dist: p.distanceTo(t), fov: this.camera.fov};
-      }
-    }
-
-    /* ── Estado ─────────────────────────────────────────────────────────── */
-    const state = {
-      screen: 'setup',
-      rater: null,
-      practice: true,
-      queue: [], qi: 0,
-      current: null,
-      records: [], doneHashes: [],
-      modelsSinceBreak: 0,
-      showCoords: false,
-      totalReal: 0,
-    };
-
-    const viewer = new Viewer($('viewer'));
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => viewer.refreshTheme());
-    new MutationObserver(() => viewer.refreshTheme()).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
-
-    /* ── Envío de datos: Google Sheets, base de datos del artifact o solo local ── */
-    const backend = {
-      kind: CONFIG.endpoint ? 'sheets' : 'local',
-      db: null, uid: null, downloads: null,
-      async init() {
-        if (this.kind === 'local' && window.claude?.use) {
-          try {
-            const [db, user, downloads] = await Promise.all([window.claude.use('db'), window.claude.use('user'), window.claude.use('downloads')]);
-            this.downloads = downloads;
-            const uid = user ? await user.id() : null;
-            if (db && uid) {this.db = db; this.uid = uid; this.kind = 'claude';}
-          } catch (e) {console.warn('Capacidades no disponibles', e);}
-        }
-        updateSyncChip();
-      },
-      async send(payload) {   // payload: {rows:[], sessions:[]}; devuelve los row_id confirmados
-        if (this.kind === 'sheets') {
-          const res = await fetch(CONFIG.endpoint, {
-            method: 'POST', redirect: 'follow',
-            headers: {'Content-Type': 'text/plain;charset=utf-8'},   // evita la comprobación CORS previa
-            body: JSON.stringify({token: CONFIG.token, action: 'append', ...payload}),
-          });
-          const out = await res.json();
-          if (!out.ok) throw new Error(out.error || 'El servidor rechazó los datos');
-          return out.stored || payload.rows.map((r) => r.row_id);
-        }
-        if (this.kind === 'claude') {
-          const base = this.db.doc(`annotations/${this.uid}`);
-          for (const s of payload.sessions) {
-            await base.set({last_rater_code: s.rater_code, updated_at: new Date().toISOString()});
-            await base.collection('sessions').doc(s.session_id).set(s);
-          }
-          for (const r of payload.rows) await base.collection('rows').doc(r.row_id).set(r);
-          return payload.rows.map((r) => r.row_id);
-        }
-        throw new Error('Sin servidor configurado');
-      },
-      async progress(code, session) {
-        if (this.kind === 'sheets') {
-          const u = new URL(CONFIG.endpoint);
-          u.searchParams.set('action', 'progress'); u.searchParams.set('token', CONFIG.token);
-          u.searchParams.set('rater', code); u.searchParams.set('session', String(session));
-          const res = await fetch(u.toString(), {redirect: 'follow'});
-          const out = await res.json();
-          if (!out.ok) throw new Error(out.error || 'Error al consultar el progreso');
-          return out.rows || [];
-        }
-        if (this.kind === 'claude') {
-          const snap = await this.db.doc(`annotations/${this.uid}`).collection('rows')
-            .where('rater_code', '==', code).where('session', '==', session).limit(1000).get();
-          return snap.docs.map((d) => d.data()).filter(Boolean);
-        }
-        return [];
-      },
-    };
-
-    /* Cola de salida: nada se da por enviado hasta que el servidor lo confirma */
-    const outbox = {
-      items: store.get(OUTBOX_KEY) || {rows: [], sessions: []},
-      sending: false, lastError: null,
-      save() {store.set(OUTBOX_KEY, this.items);},
-      add(rows = [], sessions = []) {this.items.rows.push(...rows); this.items.sessions.push(...sessions); this.save(); this.flush();},
-      get pending() {return this.items.rows.length;},
-      async flush() {
-        if (this.sending || backend.kind === 'local' || (!this.items.rows.length && !this.items.sessions.length)) {updateSyncChip(); return;}
-        this.sending = true; updateSyncChip();
-        const batch = {rows: this.items.rows.slice(0, 60), sessions: this.items.sessions.slice()};
-        try {
-          const stored = new Set(await backend.send(batch));
-          this.items.rows = this.items.rows.filter((r) => !stored.has(r.row_id));
-          this.items.sessions = this.items.sessions.filter((s) => !batch.sessions.includes(s));
-          this.lastError = null; this.save();
-        } catch (e) {
-          this.lastError = e; console.warn('Envío fallido; se reintentará', e);
-        } finally {
-          this.sending = false; updateSyncChip();
-          if (!this.lastError && this.items.rows.length) setTimeout(() => this.flush(), 200);
-        }
-      },
-    };
-    setInterval(() => outbox.flush(), 30000);
-    window.addEventListener('online', () => outbox.flush());
-
-    function updateSyncChip() {
-      const chip = $('chip-sync'), txt = $('chip-sync-text');
-      if (backend.kind === 'local') {chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return;}
-      if (outbox.sending) {chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return;}
-      if (outbox.pending) {chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return;}
-      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor del estudio: todo enviado' : 'Copia en servidor: al día';
-      if (state.screen === 'end') renderEnd();
-    }
-
-    /* ── Interacción en el visor ────────────────────────────────────────── */
-    const canvas = viewer.renderer.domElement;
-    let down = null, hoverQueued = false, lastMove = null;
-    canvas.addEventListener('pointerdown', (e) => {if (e.button === 0) down = {x: e.clientX, y: e.clientY, t: performance.now()};});
-    canvas.addEventListener('pointerup', (e) => {
-      if (!down || e.button !== 0) return;
-      const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
-      down = null;
-      if (state.screen === 'annotate' && moved < 5 && dt < 700) placeAt(e.clientX, e.clientY);
-    });
-    canvas.addEventListener('pointermove', (e) => {
-      if (state.screen !== 'annotate' || e.buttons) return;
-      lastMove = e;
-      if (hoverQueued) return; hoverQueued = true;
-      requestAnimationFrame(() => {
-        hoverQueued = false;
-        const st = state.current; if (!st) return;
-        viewer.setHover(viewer.pick(lastMove.clientX, lastMove.clientY), LANDMARKS[st.stepIdx].color);
+    updateSyncChip();
+  },
+  async send(payload) {   // payload: {rows:[], sessions:[]}; devuelve los row_id confirmados
+    if (this.kind === 'sheets') {
+      const res = await fetch(CONFIG.endpoint, {
+        method: 'POST', redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // evita la comprobación CORS previa
+        body: JSON.stringify({ token: CONFIG.token, action: 'append', ...payload }),
       });
-    });
-    canvas.addEventListener('pointerleave', () => viewer.setHover(null));
-    viewer.controls.addEventListener('start', () => {const st = state.current; if (state.screen === 'annotate' && st) st.steps[LANDMARKS[st.stepIdx].key].nInteractions++;});
-
-    window.addEventListener('beforeunload', (e) => {
-      const st = state.current;
-      if (state.screen === 'annotate' && st && LANDMARKS.some((l) => st.steps[l.key].hit)) {e.preventDefault(); e.returnValue = '';}
-    });
-
-    function placeAt(x, y) {
-      const st = state.current; if (!st) return;
-      const lm = LANDMARKS[st.stepIdx], s = st.steps[lm.key];
-      if (s.confirmed) return;
-      const hit = viewer.pick(x, y);
-      if (!hit) return;
-      if (!s.tFirst) s.tFirst = performance.now();
-      s.nPlacements++;
-      s.hit = hit;
-      s.camera = viewer.cameraState();
-      s.viewport = [viewer.el.clientWidth, viewer.el.clientHeight];
-      viewer.setMarker(lm.key, hit.point);
-      renderAnnotate();
+      const out = await res.json();
+      if (!out.ok) throw new Error(out.error || 'El servidor rechazó los datos');
+      return out.stored || payload.rows.map((r) => r.row_id);
     }
-
-    function setViewTag(lm, text, sub) {
-      $('view-swatch').style.background = lm ? `var(${lm.color})` : 'var(--muted)';
-      $('view-tag-text').innerHTML = esc(text) + (sub ? ` <small>${esc(sub)}</small>` : '');
+    if (this.kind === 'claude') {
+      const base = this.db.doc(`annotations/${this.uid}`);
+      for (const s of payload.sessions) {
+        await base.set({ last_rater_code: s.rater_code, updated_at: new Date().toISOString() });
+        await base.collection('sessions').doc(s.session_id).set(s);
+      }
+      for (const r of payload.rows) await base.collection('rows').doc(r.row_id).set(r);
+      return payload.rows.map((r) => r.row_id);
     }
-    function showReadout(text) {const r = $('readout'); r.hidden = !text; r.textContent = text || '';}
-    async function showDemo(label = 'Modelo de práctica') {
-      if (!MANIFEST) return;
-      try {viewer.setGeometry(await loadEntryGeometry(MANIFEST.demo)); viewer.setView('anterior'); setViewTag(null, label);} catch (e) {console.warn(e);}
+    throw new Error('Sin servidor configurado');
+  },
+  async progress(code, session) {
+    if (this.kind === 'sheets') {
+      const u = new URL(CONFIG.endpoint);
+      u.searchParams.set('action', 'progress'); u.searchParams.set('token', CONFIG.token);
+      u.searchParams.set('rater', code); u.searchParams.set('session', String(session));
+      const res = await fetch(u.toString(), { redirect: 'follow' });
+      const out = await res.json();
+      if (!out.ok) throw new Error(out.error || 'Error al consultar el progreso');
+      return out.rows || [];
     }
+    if (this.kind === 'claude') {
+      const snap = await this.db.doc(`annotations/${this.uid}`).collection('rows')
+        .where('rater_code', '==', code).where('session', '==', session).limit(1000).get();
+      return snap.docs.map((d) => d.data()).filter(Boolean);
+    }
+    return [];
+  },
+};
 
-    /* ── Pantalla 1: preparación ────────────────────────────────────────── */
-    function renderSetup() {
-      state.screen = 'setup';
-      $('viewer').dataset.mode = 'preview';
-      const r = state.rater || {};
-      const n = MANIFEST.models.length;
-      const mb = (MANIFEST.models.reduce((s, m) => s + m.n_vertices * 12, 0) / 1048576).toFixed(0);
-      $('panel').innerHTML = `
+/* Cola de salida: nada se da por enviado hasta que el servidor lo confirma */
+const outbox = {
+  items: store.get(OUTBOX_KEY) || { rows: [], sessions: [] },
+  sending: false, lastError: null,
+  save() { store.set(OUTBOX_KEY, this.items); },
+  add(rows = [], sessions = []) { this.items.rows.push(...rows); this.items.sessions.push(...sessions); this.save(); this.flush(); },
+  get pending() { return this.items.rows.length; },
+  async flush() {
+    if (this.sending || backend.kind === 'local' || (!this.items.rows.length && !this.items.sessions.length)) { updateSyncChip(); return; }
+    this.sending = true; updateSyncChip();
+    const batch = { rows: this.items.rows.slice(0, 60), sessions: this.items.sessions.slice() };
+    try {
+      const stored = new Set(await backend.send(batch));
+      this.items.rows = this.items.rows.filter((r) => !stored.has(r.row_id));
+      this.items.sessions = this.items.sessions.filter((s) => !batch.sessions.includes(s));
+      this.lastError = null; this.save();
+    } catch (e) {
+      this.lastError = e; console.warn('Envío fallido; se reintentará', e);
+    } finally {
+      this.sending = false; updateSyncChip();
+      if (!this.lastError && this.items.rows.length) setTimeout(() => this.flush(), 200);
+    }
+  },
+};
+setInterval(() => outbox.flush(), 30000);
+window.addEventListener('online', () => outbox.flush());
+
+function updateSyncChip() {
+  const chip = $('chip-sync'), txt = $('chip-sync-text');
+  if (backend.kind === 'local') { chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return; }
+  if (outbox.sending) { chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return; }
+  if (outbox.pending) { chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return; }
+  chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor del estudio: todo enviado' : 'Copia en servidor: al día';
+  if (state.screen === 'end') renderEnd();
+}
+
+/* ── Interacción en el visor ────────────────────────────────────────── */
+const canvas = viewer.renderer.domElement;
+let down = null, hoverQueued = false, lastMove = null;
+canvas.addEventListener('pointerdown', (e) => { if (e.button === 0) down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+canvas.addEventListener('pointerup', (e) => {
+  if (!down || e.button !== 0) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
+  down = null;
+  if (state.screen === 'annotate' && moved < 5 && dt < 700) placeAt(e.clientX, e.clientY);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (state.screen !== 'annotate' || e.buttons) return;
+  lastMove = e;
+  if (hoverQueued) return; hoverQueued = true;
+  requestAnimationFrame(() => {
+    hoverQueued = false;
+    const st = state.current; if (!st) return;
+    viewer.setHover(viewer.pick(lastMove.clientX, lastMove.clientY), LANDMARKS[st.stepIdx].color);
+  });
+});
+canvas.addEventListener('pointerleave', () => viewer.setHover(null));
+viewer.controls.addEventListener('start', () => { const st = state.current; if (state.screen === 'annotate' && st) st.steps[LANDMARKS[st.stepIdx].key].nInteractions++; });
+
+window.addEventListener('beforeunload', (e) => {
+  const st = state.current;
+  if (state.screen === 'annotate' && st && LANDMARKS.some((l) => st.steps[l.key].hit)) { e.preventDefault(); e.returnValue = ''; }
+});
+
+function placeAt(x, y) {
+  const st = state.current; if (!st) return;
+  const lm = LANDMARKS[st.stepIdx], s = st.steps[lm.key];
+  if (s.confirmed) return;
+  const hit = viewer.pick(x, y);
+  if (!hit) return;
+  if (!s.tFirst) s.tFirst = performance.now();
+  s.nPlacements++;
+  s.hit = hit;
+  s.camera = viewer.cameraState();
+  s.viewport = [viewer.el.clientWidth, viewer.el.clientHeight];
+  viewer.setMarker(lm.key, hit.point);
+  renderAnnotate();
+}
+
+function setViewTag(lm, text, sub) {
+  $('view-swatch').style.background = lm ? `var(${lm.color})` : 'var(--muted)';
+  $('view-tag-text').innerHTML = esc(text) + (sub ? ` <small>${esc(sub)}</small>` : '');
+}
+function showReadout(text) { const r = $('readout'); r.hidden = !text; r.textContent = text || ''; }
+async function showDemo(label = 'Modelo de práctica') {
+  if (!MANIFEST) return;
+  try { viewer.setGeometry(await loadEntryGeometry(MANIFEST.demo)); viewer.setView('anterior'); setViewTag(null, label); } catch (e) { console.warn(e); }
+}
+
+/* ── Pantalla 1: preparación ────────────────────────────────────────── */
+function renderSetup() {
+  state.screen = 'setup';
+  $('viewer').dataset.mode = 'preview';
+  const r = state.rater || {};
+  const n = MANIFEST.models.length;
+  const mb = (MANIFEST.models.reduce((s, m) => s + m.n_vertices * 12, 0) / 1048576).toFixed(0);
+  $('panel').innerHTML = `
     <div class="section">
       <span class="eyebrow">Antes de empezar</span>
       <h2>Identificación del observador</h2>
@@ -1362,99 +760,99 @@
       <button class="btn btn-primary btn-block" id="go-tutorial" type="button">Continuar a las instrucciones</button>
       <small class="muted">Se descargan unos ${mb} MB a lo largo de la sesión.</small>
     </div>`;
-      $('f-group').addEventListener('change', () => {$('exp-field').hidden = $('f-group').value !== 'clinico';});
-      if (!window.matchMedia('(any-pointer: fine)').matches) {
-        $('pointer-note').innerHTML = '<div class="notice">Este equipo no parece tener ratón. El procedimiento está pensado para hacerse con ratón; conecta uno antes de empezar.</div>';
-      }
-      $('f-code').addEventListener('input', updateResumeNote);
-      $('f-session').addEventListener('change', updateResumeNote);
-      $('go-tutorial').addEventListener('click', submitSetup);
-      updateResumeNote();
-    }
+  $('f-group').addEventListener('change', () => { $('exp-field').hidden = $('f-group').value !== 'clinico'; });
+  if (!window.matchMedia('(any-pointer: fine)').matches) {
+    $('pointer-note').innerHTML = '<div class="notice">Este equipo no parece tener ratón. El procedimiento está pensado para hacerse con ratón; conecta uno antes de empezar.</div>';
+  }
+  $('f-code').addEventListener('input', updateResumeNote);
+  $('f-session').addEventListener('change', updateResumeNote);
+  $('go-tutorial').addEventListener('click', submitSetup);
+  updateResumeNote();
+}
 
-    function readSetup() {
-      const group = $('f-group').value;
-      return {
-        code: $('f-code').value.trim().toUpperCase(),
-        session: Number($('f-session').value),
-        group,
-        device: 'raton',
-        experience: group !== 'clinico' || $('f-exp').value === '' ? null : Number($('f-exp').value),
-      };
-    }
-    function updateResumeNote() {
-      const {code, session} = readSetup();
-      const note = $('resume-note');
-      const prev = /^[A-Z0-9_-]{2,20}$/.test(code) ? store.get(progressKey(code, session)) : null;
-      const n = prev?.doneHashes?.filter((h) => h !== DEMO_KEY).length || 0;
-      note.innerHTML = n ? `<div class="notice">Este navegador tiene ${n} modelo${n === 1 ? '' : 's'} ya anotado${n === 1 ? '' : 's'} con ${esc(code)} · sesión ${session}. Continuarás desde ahí.</div>` : '';
-    }
+function readSetup() {
+  const group = $('f-group').value;
+  return {
+    code: $('f-code').value.trim().toUpperCase(),
+    session: Number($('f-session').value),
+    group,
+    device: 'raton',
+    experience: group !== 'clinico' || $('f-exp').value === '' ? null : Number($('f-exp').value),
+  };
+}
+function updateResumeNote() {
+  const { code, session } = readSetup();
+  const note = $('resume-note');
+  const prev = /^[A-Z0-9_-]{2,20}$/.test(code) ? store.get(progressKey(code, session)) : null;
+  const n = prev?.doneHashes?.filter((h) => h !== DEMO_KEY).length || 0;
+  note.innerHTML = n ? `<div class="notice">Este navegador tiene ${n} modelo${n === 1 ? '' : 's'} ya anotado${n === 1 ? '' : 's'} con ${esc(code)} · sesión ${session}. Continuarás desde ahí.</div>` : '';
+}
 
-    async function submitSetup() {
-      const r = readSetup();
-      const err = $('setup-error');
-      err.textContent = '';
-      if (!/^[A-Z0-9_-]{2,20}$/.test(r.code)) {err.textContent = 'Escribe un código de observador de 2 a 20 caracteres (letras, números, guion o guion bajo).'; $('f-code').focus(); return;}
-      if (r.group === 'clinico' && (r.experience === null || !(r.experience >= 0 && r.experience <= 60))) {err.textContent = 'Indica los años de experiencia clínica (0 si estás empezando).'; $('f-exp').focus(); return;}
-      state.rater = r; state.practice = $('f-practice').checked;
+async function submitSetup() {
+  const r = readSetup();
+  const err = $('setup-error');
+  err.textContent = '';
+  if (!/^[A-Z0-9_-]{2,20}$/.test(r.code)) { err.textContent = 'Escribe un código de observador de 2 a 20 caracteres (letras, números, guion o guion bajo).'; $('f-code').focus(); return; }
+  if (r.group === 'clinico' && (r.experience === null || !(r.experience >= 0 && r.experience <= 60))) { err.textContent = 'Indica los años de experiencia clínica (0 si estás empezando).'; $('f-exp').focus(); return; }
+  state.rater = r; state.practice = $('f-practice').checked;
 
-      const btn = $('go-tutorial'); btn.disabled = true; btn.textContent = 'Comprobando el progreso guardado…';
-      const local = store.get(progressKey(r.code, r.session)) || {records: [], doneHashes: []};
-      let remote = [];
-      try {remote = await backend.progress(r.code, r.session);}
-      catch (e) {
-        console.warn(e);
-        if (backend.kind === 'sheets' && !local.records.length) {
-          btn.disabled = false; btn.textContent = 'Continuar a las instrucciones';
-          err.textContent = 'No se pudo contactar con el servidor del estudio. Comprueba la conexión a internet y vuelve a intentarlo.';
-          return;
-        }
-      }
+  const btn = $('go-tutorial'); btn.disabled = true; btn.textContent = 'Comprobando el progreso guardado…';
+  const local = store.get(progressKey(r.code, r.session)) || { records: [], doneHashes: [] };
+  let remote = [];
+  try { remote = await backend.progress(r.code, r.session); }
+  catch (e) {
+    console.warn(e);
+    if (backend.kind === 'sheets' && !local.records.length) {
       btn.disabled = false; btn.textContent = 'Continuar a las instrucciones';
-
-      // Unión de lo guardado aquí, en el servidor y lo pendiente de envío. Un modelo cuenta si tiene sus tres landmarks.
-      const byId = new Map();
-      const pend = outbox.items.rows.filter((x) => x.rater_code === r.code && x.session === r.session);
-      for (const row of [...(local.records || []), ...remote, ...pend]) byId.set(row.row_id, row);
-      const counts = {};
-      for (const row of byId.values()) counts[row.model_hash] = (counts[row.model_hash] || 0) + 1;
-      state.doneHashes = Object.keys(counts).filter((h) => counts[h] >= LANDMARKS.length);
-      state.records = [...byId.values()].filter((row) => state.doneHashes.includes(row.model_hash));
-      store.set(progressKey(r.code, r.session), {records: state.records, doneHashes: state.doneHashes});
-
-      const rnd = seededRandom(`${r.code}|s${r.session}`);
-      const order = shuffle(MANIFEST.models.map((m) => m.code).sort(), rnd);
-      state.queue = [];
-      const demoDone = state.records.some((x) => x.model_code === DEMO_KEY);
-      if (state.practice && !demoDone) state.queue.push({entry: MANIFEST.demo, code: DEMO_KEY, hash: MANIFEST.demo.sha256_bin, practice: true});
-      order.forEach((code, i) => {
-        const m = MANIFEST.models.find((x) => x.code === code);
-        if (!state.doneHashes.includes(m.sha256_bin)) state.queue.push({entry: m, code, hash: m.sha256_bin, practice: false, order: i + 1});
-      });
-      state.totalReal = MANIFEST.models.length;
-      state.qi = 0;
-      const chip = $('chip-rater'); chip.hidden = false;
-      chip.innerHTML = `<b>${esc(r.code)}</b> sesión ${r.session}`;
-      outbox.add([], [{session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, session: r.session, group: r.group, device: r.device, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}`}]);
-      prefetch(state.queue[0]?.entry); prefetch(state.queue[1]?.entry);
-      if (!state.queue.length) return renderEnd();
-      openTutorial();
+      err.textContent = 'No se pudo contactar con el servidor del estudio. Comprueba la conexión a internet y vuelve a intentarlo.';
+      return;
     }
+  }
+  btn.disabled = false; btn.textContent = 'Continuar a las instrucciones';
 
-    const DEFAULT_RULES = [
-      '<b>Haz clic sobre la superficie</b> para colocar el punto. Si no te convence, vuelve a hacer clic en otro sitio: el punto se mueve.',
-      'Cuando estés conforme, pulsa <b>Confirmar</b>. Antes de guardar el modelo puedes volver a un landmark confirmado pulsándolo en la lista.',
-      'Al pulsar <b>Guardar y continuar</b> el modelo queda guardado y cerrado; no se puede revisar.',
-      'Usa <b>un ratón con rueda</b>; no uses trackpad ni pantalla táctil.',
-      'Trabaja a tu ritmo. Te propondremos una pausa cada {pausa} modelos, y puedes cerrar la página cuando quieras: lo guardado se conserva.',
-      'Derecha e izquierda son siempre <b>del paciente</b>.',
-    ];
+  // Unión de lo guardado aquí, en el servidor y lo pendiente de envío. Un modelo cuenta si tiene sus tres landmarks.
+  const byId = new Map();
+  const pend = outbox.items.rows.filter((x) => x.rater_code === r.code && x.session === r.session);
+  for (const row of [...(local.records || []), ...remote, ...pend]) byId.set(row.row_id, row);
+  const counts = {};
+  for (const row of byId.values()) counts[row.model_hash] = (counts[row.model_hash] || 0) + 1;
+  state.doneHashes = Object.keys(counts).filter((h) => counts[h] >= LANDMARKS.length);
+  state.records = [...byId.values()].filter((row) => state.doneHashes.includes(row.model_hash));
+  store.set(progressKey(r.code, r.session), { records: state.records, doneHashes: state.doneHashes });
 
-    /* ── Instrucciones ──────────────────────────────────────────────────── */
-    function openTutorial() {
-      state.screen = 'tutorial';
-      const resumed = state.doneHashes.length > 0;
-      $('dialog').innerHTML = `
+  const rnd = seededRandom(`${r.code}|s${r.session}`);
+  const order = shuffle(MANIFEST.models.map((m) => m.code).sort(), rnd);
+  state.queue = [];
+  const demoDone = state.records.some((x) => x.model_code === DEMO_KEY);
+  if (state.practice && !demoDone) state.queue.push({ entry: MANIFEST.demo, code: DEMO_KEY, hash: MANIFEST.demo.sha256_bin, practice: true });
+  order.forEach((code, i) => {
+    const m = MANIFEST.models.find((x) => x.code === code);
+    if (!state.doneHashes.includes(m.sha256_bin)) state.queue.push({ entry: m, code, hash: m.sha256_bin, practice: false, order: i + 1 });
+  });
+  state.totalReal = MANIFEST.models.length;
+  state.qi = 0;
+  const chip = $('chip-rater'); chip.hidden = false;
+  chip.innerHTML = `<b>${esc(r.code)}</b> sesión ${r.session}`;
+  outbox.add([], [{ session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, session: r.session, group: r.group, device: r.device, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}` }]);
+  prefetch(state.queue[0]?.entry); prefetch(state.queue[1]?.entry);
+  if (!state.queue.length) return renderEnd();
+  openTutorial();
+}
+
+const DEFAULT_RULES = [
+  '<b>Haz clic sobre la superficie</b> para colocar el punto. Si no te convence, vuelve a hacer clic en otro sitio: el punto se mueve.',
+  'Cuando estés conforme, pulsa <b>Confirmar</b>. Antes de guardar el modelo puedes volver a un landmark confirmado pulsándolo en la lista.',
+  'Al pulsar <b>Guardar y continuar</b> el modelo queda guardado y cerrado; no se puede revisar.',
+  'Usa <b>un ratón con rueda</b>; no uses trackpad ni pantalla táctil.',
+  'Trabaja a tu ritmo. Te propondremos una pausa cada {pausa} modelos, y puedes cerrar la página cuando quieras: lo guardado se conserva.',
+  'Derecha e izquierda son siempre <b>del paciente</b>.',
+];
+
+/* ── Instrucciones ──────────────────────────────────────────────────── */
+function openTutorial() {
+  state.screen = 'tutorial';
+  const resumed = state.doneHashes.length > 0;
+  $('dialog').innerHTML = `
     <div class="section" style="gap:8px">
       <span class="eyebrow">Instrucciones · leer antes de empezar</span>
       <h2 id="dialog-title">Vas a marcar tres puntos anatómicos en cada modelo</h2>
@@ -1475,7 +873,7 @@
         <span class="eyebrow">Cómo trabajar</span>
         <ol class="rules">
           ${(Array.isArray(CONFIG.instructions) && CONFIG.instructions.length ? CONFIG.instructions : DEFAULT_RULES)
-          .map((t) => `<li>${String(t).replace('{pausa}', CONFIG.pauseEvery)}</li>`).join('')}
+            .map((t) => `<li>${String(t).replace('{pausa}', CONFIG.pauseEvery)}</li>`).join('')}
         </ol>
       </div>
       <div class="section" style="gap:8px">
@@ -1492,57 +890,57 @@
       <button class="btn" type="button" id="tut-back">Volver</button>
       <button class="btn btn-primary" type="button" id="tut-start">${state.queue[0]?.practice ? 'Empezar con el modelo de práctica' : (resumed ? 'Continuar la anotación' : 'Empezar la anotación')}</button>
     </div>`;
-      $('overlay').hidden = false;
-      $('tut-start').focus();
-      $('tut-back').addEventListener('click', () => {$('overlay').hidden = true; renderSetup();});
-      $('tut-start').addEventListener('click', () => {$('overlay').hidden = true; loadQueueItem();});
-    }
+  $('overlay').hidden = false;
+  $('tut-start').focus();
+  $('tut-back').addEventListener('click', () => { $('overlay').hidden = true; renderSetup(); });
+  $('tut-start').addEventListener('click', () => { $('overlay').hidden = true; loadQueueItem(); });
+}
 
-    /* ── Pantalla 2: anotación ──────────────────────────────────────────── */
-    async function loadQueueItem() {
-      if (state.qi >= state.queue.length) return renderEnd();
-      const item = state.queue[state.qi];
-      state.screen = 'annotate';
-      state.current = null;
-      $('viewer').dataset.mode = 'annotate';
-      $('viewer-loading').hidden = false;
-      showReadout(null);
-      let geom;
-      try {geom = await loadEntryGeometry(item.entry);}
-      catch (e) {
-        $('viewer-loading').hidden = true;
-        $('panel').innerHTML = `<div class="section"><h2>No se pudo abrir el modelo</h2><p>${esc(e.message)}</p><div class="btn-row"><button class="btn btn-primary" id="retry" type="button">Reintentar</button></div></div>`;
-        $('retry').onclick = () => {modelCache.delete(item.entry.file); facesCache.delete(item.entry.faces); loadQueueItem();};
-        return;
-      }
-      viewer.setGeometry(geom);
-      $('viewer-loading').hidden = true;
-      prefetch(state.queue[state.qi + 1]?.entry);
-      const steps = {};
-      for (const lm of LANDMARKS) steps[lm.key] = {confirmed: false, hit: null, tShown: null, tFirst: null, tConfirm: null, nPlacements: 0, nViewResets: 0, nInteractions: 0, camera: null, viewport: null};
-      state.current = {item, steps, stepIdx: 0, startedAt: new Date().toISOString()};
-      goToStep(0);
-    }
+/* ── Pantalla 2: anotación ──────────────────────────────────────────── */
+async function loadQueueItem() {
+  if (state.qi >= state.queue.length) return renderEnd();
+  const item = state.queue[state.qi];
+  state.screen = 'annotate';
+  state.current = null;
+  $('viewer').dataset.mode = 'annotate';
+  $('viewer-loading').hidden = false;
+  showReadout(null);
+  let geom;
+  try { geom = await loadEntryGeometry(item.entry); }
+  catch (e) {
+    $('viewer-loading').hidden = true;
+    $('panel').innerHTML = `<div class="section"><h2>No se pudo abrir el modelo</h2><p>${esc(e.message)}</p><div class="btn-row"><button class="btn btn-primary" id="retry" type="button">Reintentar</button></div></div>`;
+    $('retry').onclick = () => { modelCache.delete(item.entry.file); facesCache.delete(item.entry.faces); loadQueueItem(); };
+    return;
+  }
+  viewer.setGeometry(geom);
+  $('viewer-loading').hidden = true;
+  prefetch(state.queue[state.qi + 1]?.entry);
+  const steps = {};
+  for (const lm of LANDMARKS) steps[lm.key] = { confirmed: false, hit: null, tShown: null, tFirst: null, tConfirm: null, nPlacements: 0, nViewResets: 0, nInteractions: 0, camera: null, viewport: null };
+  state.current = { item, steps, stepIdx: 0, startedAt: new Date().toISOString() };
+  goToStep(0);
+}
 
-    function goToStep(i) {
-      const st = state.current; st.stepIdx = i;
-      const lm = LANDMARKS[i], s = st.steps[lm.key];
-      if (!s.tShown) s.tShown = performance.now();
-      viewer.setView(lm.view);
-      viewer.resetHover();
-      setViewTag(lm, lm.label, lm.viewLabel.toLowerCase());
-      renderAnnotate();
-    }
+function goToStep(i) {
+  const st = state.current; st.stepIdx = i;
+  const lm = LANDMARKS[i], s = st.steps[lm.key];
+  if (!s.tShown) s.tShown = performance.now();
+  viewer.setView(lm.view);
+  viewer.resetHover();
+  setViewTag(lm, lm.label, lm.viewLabel.toLowerCase());
+  renderAnnotate();
+}
 
-    function realDoneCount() {return state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length;}
+function realDoneCount() { return state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length; }
 
-    function renderAnnotate() {
-      const st = state.current; if (!st) return;
-      const lm = LANDMARKS[st.stepIdx], s = st.steps[lm.key];
-      const done = realDoneCount(), total = state.totalReal;
-      const allConfirmed = LANDMARKS.every((l) => st.steps[l.key].confirmed);
-      const pct = total ? (done / total) * 100 : 0;
-      $('panel').innerHTML = `
+function renderAnnotate() {
+  const st = state.current; if (!st) return;
+  const lm = LANDMARKS[st.stepIdx], s = st.steps[lm.key];
+  const done = realDoneCount(), total = state.totalReal;
+  const allConfirmed = LANDMARKS.every((l) => st.steps[l.key].confirmed);
+  const pct = total ? (done / total) * 100 : 0;
+  $('panel').innerHTML = `
     <div class="progress">
       <div class="progress-head">
         ${st.item.practice ? `<strong>Práctica</strong><span class="tag-practice">no cuenta para el estudio</span>` : `<strong>Modelo ${done + 1} de ${total}</strong><span class="eyebrow">${Math.round(pct)} %</span>`}
@@ -1571,108 +969,108 @@
         <div class="btn-row"><button class="btn btn-small" type="button" id="reset-view">Restablecer vista</button></div>
       </div>`}
     ${CONFIG.showDebug ? `<div class="section"><label class="check"><input type="checkbox" id="show-coords" ${state.showCoords ? 'checked' : ''}> <span>Mostrar coordenadas (modo de prueba)</span></label></div>` : ''}`;
-      $('panel').querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
-        const i = Number(b.dataset.step), ss = st.steps[LANDMARKS[i].key];
-        if (!ss.confirmed) return;
-        ss.confirmed = false; ss.tConfirm = null; goToStep(i);
-      }));
-      $('confirm')?.addEventListener('click', () => {
-        s.confirmed = true; s.tConfirm = performance.now();
-        viewer.setHover(null);
-        const next = LANDMARKS.findIndex((l) => !st.steps[l.key].confirmed);
-        if (next >= 0) goToStep(next); else {setViewTag(null, 'Tres landmarks confirmados'); renderAnnotate();}
-      });
-      $('reset-view')?.addEventListener('click', () => {s.nViewResets++; viewer.setView(lm.view);});
-      $('save-model')?.addEventListener('click', saveModel);
-      $('show-coords')?.addEventListener('change', (e) => {state.showCoords = e.target.checked; updateCoords();});
-      updateCoords();
-    }
+  $('panel').querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+    const i = Number(b.dataset.step), ss = st.steps[LANDMARKS[i].key];
+    if (!ss.confirmed) return;
+    ss.confirmed = false; ss.tConfirm = null; goToStep(i);
+  }));
+  $('confirm')?.addEventListener('click', () => {
+    s.confirmed = true; s.tConfirm = performance.now();
+    viewer.setHover(null);
+    const next = LANDMARKS.findIndex((l) => !st.steps[l.key].confirmed);
+    if (next >= 0) goToStep(next); else { setViewTag(null, 'Tres landmarks confirmados'); renderAnnotate(); }
+  });
+  $('reset-view')?.addEventListener('click', () => { s.nViewResets++; viewer.setView(lm.view); });
+  $('save-model')?.addEventListener('click', saveModel);
+  $('show-coords')?.addEventListener('change', (e) => { state.showCoords = e.target.checked; updateCoords(); });
+  updateCoords();
+}
 
-    function updateCoords() {
-      const st = state.current;
-      if (!CONFIG.showDebug || !state.showCoords || !st) return showReadout(null);
-      const lines = LANDMARKS.map((l) => {
-        const h = st.steps[l.key].hit;
-        return `${l.label.padEnd(17)} ${h ? [h.point.x, h.point.y, h.point.z].map((v) => fmt(v).padStart(8)).join(' ') + `  v${h.nearestIndex}` : '      —'}`;
-      });
-      showReadout(`${st.item.code.padEnd(17)} ${'X'.padStart(8)} ${'Y'.padStart(8)} ${'Z'.padStart(8)}\n` + lines.join('\n'));
-    }
+function updateCoords() {
+  const st = state.current;
+  if (!CONFIG.showDebug || !state.showCoords || !st) return showReadout(null);
+  const lines = LANDMARKS.map((l) => {
+    const h = st.steps[l.key].hit;
+    return `${l.label.padEnd(17)} ${h ? [h.point.x, h.point.y, h.point.z].map((v) => fmt(v).padStart(8)).join(' ') + `  v${h.nearestIndex}` : '      —'}`;
+  });
+  showReadout(`${st.item.code.padEnd(17)} ${'X'.padStart(8)} ${'Y'.padStart(8)} ${'Z'.padStart(8)}\n` + lines.join('\n'));
+}
 
-    function saveModel() {
-      const st = state.current, r = state.rater, item = st.item;
-      const savedAt = new Date().toISOString();
-      const order = item.practice ? 0 : realDoneCount() + 1;
-      const rows = LANDMARKS.map((l) => {
-        const s = st.steps[l.key], h = s.hit;
-        return {
-          row_id: `${r.code}_s${r.session}_${item.code}_${l.id}`,
-          rater_code: r.code, group: r.group, session: r.session, device: r.device, experience_years: r.experience,
-          model_code: item.code, model_hash: item.hash, model_order: order, practice: item.practice,
-          landmark: l.key,
-          x: h.point.x, y: h.point.y, z: h.point.z,
-          nx: h.normal.x, ny: h.normal.y, nz: h.normal.z,
-          face_index: h.faceIndex, face_v0: h.faceVerts[0], face_v1: h.faceVerts[1], face_v2: h.faceVerts[2],
-          bary_0: h.bary[0], bary_1: h.bary[1], bary_2: h.bary[2],
-          nearest_vertex: h.nearestIndex, vx: h.nearest.x, vy: h.nearest.y, vz: h.nearest.z,
-          time_to_first_click_s: (s.tFirst - s.tShown) / 1000,
-          time_to_confirm_s: (s.tConfirm - s.tShown) / 1000,
-          n_placements: s.nPlacements, n_view_resets: s.nViewResets, n_view_interactions: s.nInteractions,
-          cam_px: s.camera.pos[0], cam_py: s.camera.pos[1], cam_pz: s.camera.pos[2],
-          cam_tx: s.camera.target[0], cam_ty: s.camera.target[1], cam_tz: s.camera.target[2],
-          cam_dist: s.camera.dist, cam_fov: s.camera.fov,
-          viewport_w: s.viewport[0], viewport_h: s.viewport[1], dpr: window.devicePixelRatio,
-          model_started_at: st.startedAt, saved_at: savedAt, app_version: APP_VERSION,
-        };
-      });
-      state.records = state.records.filter((x) => !rows.some((y) => y.row_id === x.row_id)).concat(rows);
-      state.doneHashes.push(item.hash);
-      store.set(progressKey(r.code, r.session), {records: state.records, doneHashes: state.doneHashes});
-      outbox.add(rows);
-      viewer.clearMarkers();
-      state.current = null;
-      state.qi++;
-      if (!item.practice) state.modelsSinceBreak++;
-      if (state.qi < state.queue.length && state.modelsSinceBreak >= CONFIG.pauseEvery) {state.modelsSinceBreak = 0; return openPause();}
-      loadQueueItem();
-    }
+function saveModel() {
+  const st = state.current, r = state.rater, item = st.item;
+  const savedAt = new Date().toISOString();
+  const order = item.practice ? 0 : realDoneCount() + 1;
+  const rows = LANDMARKS.map((l) => {
+    const s = st.steps[l.key], h = s.hit;
+    return {
+      row_id: `${r.code}_s${r.session}_${item.code}_${l.id}`,
+      rater_code: r.code, group: r.group, session: r.session, device: r.device, experience_years: r.experience,
+      model_code: item.code, model_hash: item.hash, model_order: order, practice: item.practice,
+      landmark: l.key,
+      x: h.point.x, y: h.point.y, z: h.point.z,
+      nx: h.normal.x, ny: h.normal.y, nz: h.normal.z,
+      face_index: h.faceIndex, face_v0: h.faceVerts[0], face_v1: h.faceVerts[1], face_v2: h.faceVerts[2],
+      bary_0: h.bary[0], bary_1: h.bary[1], bary_2: h.bary[2],
+      nearest_vertex: h.nearestIndex, vx: h.nearest.x, vy: h.nearest.y, vz: h.nearest.z,
+      time_to_first_click_s: (s.tFirst - s.tShown) / 1000,
+      time_to_confirm_s: (s.tConfirm - s.tShown) / 1000,
+      n_placements: s.nPlacements, n_view_resets: s.nViewResets, n_view_interactions: s.nInteractions,
+      cam_px: s.camera.pos[0], cam_py: s.camera.pos[1], cam_pz: s.camera.pos[2],
+      cam_tx: s.camera.target[0], cam_ty: s.camera.target[1], cam_tz: s.camera.target[2],
+      cam_dist: s.camera.dist, cam_fov: s.camera.fov,
+      viewport_w: s.viewport[0], viewport_h: s.viewport[1], dpr: window.devicePixelRatio,
+      model_started_at: st.startedAt, saved_at: savedAt, app_version: APP_VERSION,
+    };
+  });
+  state.records = state.records.filter((x) => !rows.some((y) => y.row_id === x.row_id)).concat(rows);
+  state.doneHashes.push(item.hash);
+  store.set(progressKey(r.code, r.session), { records: state.records, doneHashes: state.doneHashes });
+  outbox.add(rows);
+  viewer.clearMarkers();
+  state.current = null;
+  state.qi++;
+  if (!item.practice) state.modelsSinceBreak++;
+  if (state.qi < state.queue.length && state.modelsSinceBreak >= CONFIG.pauseEvery) { state.modelsSinceBreak = 0; return openPause(); }
+  loadQueueItem();
+}
 
-    function openPause() {
-      state.screen = 'pause';
-      $('dialog').innerHTML = `
+function openPause() {
+  state.screen = 'pause';
+  $('dialog').innerHTML = `
     <span class="eyebrow">Pausa recomendada</span>
     <h2 id="dialog-title">Llevas ${realDoneCount()} de ${state.totalReal} modelos</h2>
     <p>Descansa la vista unos minutos antes de seguir. Todo lo anotado hasta ahora está guardado; si cierras la página, al volver con el mismo código y sesión continuarás desde aquí.</p>
     <div class="btn-row"><button class="btn btn-primary" id="resume" type="button">Seguir anotando</button></div>`;
-      $('overlay').hidden = false; $('resume').focus();
-      $('resume').addEventListener('click', () => {$('overlay').hidden = true; loadQueueItem();});
-    }
+  $('overlay').hidden = false; $('resume').focus();
+  $('resume').addEventListener('click', () => { $('overlay').hidden = true; loadQueueItem(); });
+}
 
-    /* ── Pantalla 3: fin ────────────────────────────────────────────────── */
-    const CSV_COLS = ['row_id', 'rater_code', 'group', 'session', 'device', 'experience_years', 'model_order', 'practice', 'model_code', 'model_hash', 'landmark', 'x', 'y', 'z', 'nx', 'ny', 'nz', 'face_index', 'face_v0', 'face_v1', 'face_v2', 'bary_0', 'bary_1', 'bary_2', 'nearest_vertex', 'vx', 'vy', 'vz', 'time_to_first_click_s', 'time_to_confirm_s', 'n_placements', 'n_view_resets', 'n_view_interactions', 'cam_px', 'cam_py', 'cam_pz', 'cam_tx', 'cam_ty', 'cam_tz', 'cam_dist', 'cam_fov', 'viewport_w', 'viewport_h', 'dpr', 'model_started_at', 'saved_at', 'app_version'];
-    function toCSV(rows) {
-      const cell = (v) => {if (v === null || v === undefined) return ''; const s = typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toPrecision(10)) : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;};
-      return [CSV_COLS.join(','), ...rows.map((r) => CSV_COLS.map((c) => cell(r[c])).join(','))].join('\n');
-    }
+/* ── Pantalla 3: fin ────────────────────────────────────────────────── */
+const CSV_COLS = ['row_id','rater_code','group','session','device','experience_years','model_order','practice','model_code','model_hash','landmark','x','y','z','nx','ny','nz','face_index','face_v0','face_v1','face_v2','bary_0','bary_1','bary_2','nearest_vertex','vx','vy','vz','time_to_first_click_s','time_to_confirm_s','n_placements','n_view_resets','n_view_interactions','cam_px','cam_py','cam_pz','cam_tx','cam_ty','cam_tz','cam_dist','cam_fov','viewport_w','viewport_h','dpr','model_started_at','saved_at','app_version'];
+function toCSV(rows) {
+  const cell = (v) => { if (v === null || v === undefined) return ''; const s = typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toPrecision(10)) : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  return [CSV_COLS.join(','), ...rows.map((r) => CSV_COLS.map((c) => cell(r[c])).join(','))].join('\n');
+}
 
-    function renderEnd() {
-      const first = state.screen !== 'end';
-      state.screen = 'end';
-      $('viewer').dataset.mode = 'preview';
-      if (first) {viewer.clearMarkers(); setViewTag(null, 'Sesión terminada');}
-      const r = state.rater;
-      const rows = state.records.slice().sort((a, b) => a.model_order - b.model_order || LANDMARKS.findIndex((l) => l.key === a.landmark) - LANDMARKS.findIndex((l) => l.key === b.landmark));
-      const real = new Set(rows.filter((x) => !x.practice).map((x) => x.model_hash)).size;
-      const pending = outbox.items.rows.filter((x) => x.rater_code === r.code && x.session === r.session).length;
-      const remote = backend.kind !== 'local';
-      $('panel').innerHTML = `
+function renderEnd() {
+  const first = state.screen !== 'end';
+  state.screen = 'end';
+  $('viewer').dataset.mode = 'preview';
+  if (first) { viewer.clearMarkers(); setViewTag(null, 'Sesión terminada'); }
+  const r = state.rater;
+  const rows = state.records.slice().sort((a, b) => a.model_order - b.model_order || LANDMARKS.findIndex((l) => l.key === a.landmark) - LANDMARKS.findIndex((l) => l.key === b.landmark));
+  const real = new Set(rows.filter((x) => !x.practice).map((x) => x.model_hash)).size;
+  const pending = outbox.items.rows.filter((x) => x.rater_code === r.code && x.session === r.session).length;
+  const remote = backend.kind !== 'local';
+  $('panel').innerHTML = `
     <div class="section">
       <span class="eyebrow">Sesión completada</span>
       <h2>${real} de ${state.totalReal} modelos anotados</h2>
       ${remote
-          ? (pending
-            ? `<div class="notice">Quedan ${pending} anotaciones por enviar al servidor. No cierres la página hasta que este aviso desaparezca.</div><div class="btn-row"><button class="btn" type="button" id="retry-send">Reintentar el envío ahora</button></div>`
-            : `<p>Todas las anotaciones están en el servidor del estudio. Ya puedes cerrar la página. Gracias por tu tiempo.</p>`)
-          : `<p>Descarga los datos y envíalos al equipo del estudio: esta copia no está conectada al servidor.</p>`}
+        ? (pending
+          ? `<div class="notice">Quedan ${pending} anotaciones por enviar al servidor. No cierres la página hasta que este aviso desaparezca.</div><div class="btn-row"><button class="btn" type="button" id="retry-send">Reintentar el envío ahora</button></div>`
+          : `<p>Todas las anotaciones están en el servidor del estudio. Ya puedes cerrar la página. Gracias por tu tiempo.</p>`)
+        : `<p>Descarga los datos y envíalos al equipo del estudio: esta copia no está conectada al servidor.</p>`}
     </div>
     <div class="section">
       <span class="eyebrow">Copia de seguridad</span>
@@ -1689,56 +1087,55 @@
         <tbody>${rows.map((x) => `<tr><td class="num">${x.practice ? 'P' : x.model_order}</td><td>${esc(x.model_code)}</td><td>${esc(LANDMARKS.find((l) => l.key === x.landmark).label)}</td><td class="num">${fmt(x.x)}</td><td class="num">${fmt(x.y)}</td><td class="num">${fmt(x.z)}</td><td class="num">${fmt(x.time_to_confirm_s, 1)}</td><td class="num">${x.n_placements}</td></tr>`).join('')}</tbody>
       </table></div>
     </div>` : ''}`;
-      const base = `siv_landmarks_${r.code}_s${r.session}`;
-      $('retry-send')?.addEventListener('click', () => outbox.flush());
-      $('dl-csv').addEventListener('click', () => offerFile(`${base}.csv`, toCSV(rows)));
-      $('dl-json').addEventListener('click', () => offerFile(`${base}.json`, JSON.stringify({app_version: APP_VERSION, rater: r, exported_at: new Date().toISOString(), coordinate_convention: MANIFEST.coordinate_convention, records: rows}, null, 2)));
-    }
+  const base = `siv_landmarks_${r.code}_s${r.session}`;
+  $('retry-send')?.addEventListener('click', () => outbox.flush());
+  $('dl-csv').addEventListener('click', () => offerFile(`${base}.csv`, toCSV(rows)));
+  $('dl-json').addEventListener('click', () => offerFile(`${base}.json`, JSON.stringify({ app_version: APP_VERSION, rater: r, exported_at: new Date().toISOString(), coordinate_convention: MANIFEST.coordinate_convention, records: rows }, null, 2)));
+}
 
-    async function offerFile(filename, data) {
-      const fb = $('dl-fallback');
-      fb.innerHTML = '';
-      if (backend.downloads) {
-        try {await backend.downloads.save({filename, data}); return;}
-        catch (e) {if (e?.code === 'declined') return;}
-      } else {
-        try {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(new Blob([data], {type: 'text/plain'})); a.download = filename;
-          document.body.appendChild(a); a.click(); a.remove();
-          return;
-        } catch { }
-      }
-      fb.innerHTML = `<p style="font-size:13px">Si la descarga no empieza, copia el contenido:</p><textarea class="export" id="export-text" readonly></textarea><button class="btn btn-small" type="button" id="copy">Copiar</button>`;
-      $('export-text').value = data;
-      $('copy').addEventListener('click', async () => {
-        try {await navigator.clipboard.writeText(data); $('copy').textContent = 'Copiado';}
-        catch {$('export-text').select(); $('copy').textContent = 'Texto seleccionado: usa Ctrl+C';}
-      });
-    }
+async function offerFile(filename, data) {
+  const fb = $('dl-fallback');
+  fb.innerHTML = '';
+  if (backend.downloads) {
+    try { await backend.downloads.save({ filename, data }); return; }
+    catch (e) { if (e?.code === 'declined') return; }
+  } else {
+    try {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([data], { type: 'text/plain' })); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      return;
+    } catch {}
+  }
+  fb.innerHTML = `<p style="font-size:13px">Si la descarga no empieza, copia el contenido:</p><textarea class="export" id="export-text" readonly></textarea><button class="btn btn-small" type="button" id="copy">Copiar</button>`;
+  $('export-text').value = data;
+  $('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(data); $('copy').textContent = 'Copiado'; }
+    catch { $('export-text').select(); $('copy').textContent = 'Texto seleccionado: usa Ctrl+C'; }
+  });
+}
 
-    /* ── Arranque ───────────────────────────────────────────────────────── */
-    (async () => {
-      $('viewer-loading').hidden = false;
-      try {
-        const res = await fetch(CONFIG.manifest, {cache: 'no-cache'});
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        MANIFEST = await res.json();
-      } catch (e) {
-        $('viewer-loading').hidden = true;
-        $('panel').innerHTML = `<div class="section"><h2>No se encontraron los modelos</h2><p>Falta el archivo <span class="mono">${esc(CONFIG.manifest)}</span> junto a esta página (${esc(e.message)}). Comprueba que la carpeta se subió completa.</p></div>`;
-        return;
-      }
-      await backend.init();
-      renderSetup();
-      await showDemo();
-      $('viewer-loading').hidden = true;
-      outbox.flush();
-    })();
+/* ── Arranque ───────────────────────────────────────────────────────── */
+(async () => {
+  $('viewer-loading').hidden = false;
+  try {
+    const res = await fetch(CONFIG.manifest, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    MANIFEST = await res.json();
+  } catch (e) {
+    $('viewer-loading').hidden = true;
+    $('panel').innerHTML = `<div class="section"><h2>No se encontraron los modelos</h2><p>Falta el archivo <span class="mono">${esc(CONFIG.manifest)}</span> junto a esta página (${esc(e.message)}). Comprueba que la carpeta se subió completa.</p></div>`;
+    return;
+  }
+  await backend.init();
+  renderSetup();
+  await showDemo();
+  $('viewer-loading').hidden = true;
+  outbox.flush();
+})();
 
-    window.__siv = {state, viewer, outbox, backend, CONFIG};
-  </script>
+window.__siv = { state, viewer, outbox, backend, CONFIG };
+</script>
 
 </body>
-
 </html>
