@@ -1219,7 +1219,7 @@
             body: JSON.stringify({token: CONFIG.token, action: 'append', ...payload}),
           });
           const out = await res.json();
-          if (!out.ok) throw new Error(out.error || 'El servidor rechazó los datos');
+          if (!out.ok) throw new Error(out.error || 'El  rechazó los datos');
           return out.stored || payload.rows.map((r) => r.row_id);
         }
         if (this.kind === 'claude') {
@@ -1231,7 +1231,7 @@
           for (const r of payload.rows) await base.collection('rows').doc(r.row_id).set(r);
           return payload.rows.map((r) => r.row_id);
         }
-        throw new Error('Sin servidor configurado');
+        throw new Error('Sin  configurado');
       },
       async progress(code, session) {
         if (this.kind === 'sheets') {
@@ -1252,7 +1252,7 @@
       },
     };
 
-    /* Cola de salida: nada se da por enviado hasta que el servidor lo confirma */
+    /* Cola de salida: nada se da por enviado hasta que el  lo confirma */
     const outbox = {
       items: store.get(OUTBOX_KEY) || {rows: [], sessions: []},
       sending: false, lastError: null,
@@ -1284,7 +1284,7 @@
       if (backend.kind === 'local') {chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return;}
       if (outbox.sending) {chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return;}
       if (outbox.pending) {chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return;}
-      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor: datos enviados' : 'Copia en servidor: actualizada';
+      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor: conectado' : 'Copia en servidor: actualizada';
       if (state.screen === 'end') renderEnd();
     }
 
