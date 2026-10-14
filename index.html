@@ -1356,7 +1356,7 @@
     </div>
     <form class="section" id="setup-form" novalidate>
       <div class="grid-2">
-        <div class="field"><label for="f-code">Código de observador</label><input id="f-code" name="code" autocomplete="off" placeholder="p. ej. OBS01" value="${esc(r.code || '')}" required><small>Sin nombres. Letras, números, guiones.</small></div>
+        <div class="field"><label for="f-code">Código de observador</label><input id="f-code" name="code" autocomplete="off" placeholder="p. ej. OBS01" value="${esc(r.code || '')}" required><small>Sin espacios en blanco.</small></div>
         <div class="field"><label for="f-session">Sesión</label><select id="f-session"><option value="1"${r.session == 2 ? '' : ' selected'}>1 · primera</option><option value="2"${r.session == 2 ? ' selected' : ''}>2 · repetición</option></select></div>
         <div class="field"><label for="f-group">Perfil</label><select id="f-group"><option value="clinico"${r.group === 'no_especialista' ? '' : ' selected'}>Clínico/a</option><option value="no_especialista"${r.group === 'no_especialista' ? ' selected' : ''}>No especialista</option></select></div>
         <div class="field" id="exp-field"${r.group === 'no_especialista' ? ' hidden' : ''}><label for="f-exp">Experiencia clínica (años)</label><input id="f-exp" type="number" min="0" max="60" step="1" inputmode="numeric" value="${esc(r.experience ?? '')}"></div>
