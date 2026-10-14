@@ -1284,7 +1284,7 @@
       if (backend.kind === 'local') {chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return;}
       if (outbox.sending) {chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return;}
       if (outbox.pending) {chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return;}
-      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor del estudio: todo enviado' : 'Copia en servidor: al día';
+      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor: datos enviados' : 'Copia en servidor: actualizada';
       if (state.screen === 'end') renderEnd();
     }
 
