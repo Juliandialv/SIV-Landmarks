@@ -21,7 +21,7 @@ window.SIV_CONFIG = {
   // Cambia esto solo antes de empezar el estudio: todos los observadores deben ver el mismo encuadre.
   views: {
     sellion: { zoom: 1.10,  center: [0.5, 0.5, 0.5] },
-    tragion: { zoom: 1.45, center: [0.5, 0.5, 0.5] },
+    tragion: { zoom: 1.35, center: [0.5, 0.5, 0.5] },
   },
 
   // ── Textos de ayuda de cada landmark ────────────────────────────────────
