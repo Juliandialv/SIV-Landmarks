@@ -758,7 +758,7 @@ function renderSetup() {
     </form>
     <div class="section">
       <span class="eyebrow">Tarea</span>
-      <p>${n} modelos craneales, tres puntos en cada uno. Calcula entre 1 y 2 minutos por modelo; puedes hacerlo en varios ratos.</p>
+      <p>${n} modelos craneales, tres puntos en cada uno. Calcula 1 minuto por modelo; puedes hacerlo en varios ratos.</p>
       <label class="check"><input type="checkbox" id="f-practice" ${state.practice === false ? '' : 'checked'}> <span>Empezar con el modelo de práctica (no cuenta para el estudio)</span></label>
       ${CONFIG_PROBLEM ? `<div class="form-error" role="alert">${esc(CONFIG_PROBLEM)}</div>` : ''}
       ${backend.kind === 'local' ? '<div class="notice">Esta copia no está conectada al servidor del estudio: las anotaciones se guardan en este navegador y tendrás que descargarlas al terminar.</div>' : ''}
