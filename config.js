@@ -20,7 +20,7 @@ window.SIV_CONFIG = {
   //         Para el sellion, sube Z (p. ej. 0.52) si queda bajo en pantalla.
   // Cambia esto solo antes de empezar el estudio: todos los observadores deben ver el mismo encuadre.
   views: {
-    sellion: { zoom: 1.10,  center: [0.5, 0.5, 0.5] },
+    sellion: { zoom: 1.20,  center: [0.5, 0.5, 0.5] },
     tragion: { zoom: 1.35, center: [0.5, 0.5, 0.5] },
   },
 
