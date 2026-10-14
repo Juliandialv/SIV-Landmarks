@@ -294,7 +294,7 @@ textarea.export { width: 100%; min-height: 120px; font-family: var(--font-data);
       <div class="readout" id="readout" hidden></div>
       <div class="viewer-hint" id="viewer-hint">
         <span><kbd>arrastrar</kbd> girar</span>
-        <span><kbd>rueda</kbd> zoom hacia el cursor</span>
+        <span><kbd>rueda</kbd>  hacia el cursor</span>
         <span><kbd>botón derecho</kbd> desplazar</span>
       </div>
       <div class="viewer-loading" id="viewer-loading" hidden>Cargando modelo…</div>
@@ -334,7 +334,7 @@ const CONFIG = Object.assign({ endpoint: '', token: '', pauseEvery: 15, showDebu
    center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
    Se pueden sobrescribir desde config.js (views.sellion / views.tragion). */
 const VIEW_SETTINGS = {
-  sellion: Object.assign({ zoom: 1.3, center: [0.5, 0.5, 0.48] }, CONFIG.views.sellion || {}),
+  sellion: Object.assign({ zoom: 1.25, center: [0.5, 0.5, 0.48] }, CONFIG.views.sellion || {}),
   tragion: Object.assign({ zoom: 1.45, center: [0.42, 0.5, 0.42] }, CONFIG.views.tragion || {}),
 };
 const DEMO_KEY = 'DEMO';
