@@ -1,0 +1,1436 @@
+{
+ "schema": 1,
+ "created_at": "2026-10-14T08:17:13+00:00",
+ "coordinate_convention": "X anterior, Y izquierda del paciente, Z superior; unidades y origen del OBJ original",
+ "vertex_index_base": 0,
+ "positions_dtype": "float32-le",
+ "faces_dtype": "uint32-le",
+ "n_models": 74,
+ "demo": {
+  "file": "demo/demo.bin",
+  "faces": "faces/efaf87d14bdf9725.bin",
+  "n_vertices": 69536,
+  "n_faces": 137232,
+  "sha256_bin": "1c2af1afa25e6db9d789235c4539aadac4bc91165ac4252335c975fde8c23a83",
+  "bbox_min": [
+   -44.4004,
+   -55.1737,
+   467.34
+  ],
+  "bbox_max": [
+   79.2116,
+   54.9427,
+   600.071
+  ],
+  "max_float32_error_mm": 3.0273437459982233e-05,
+  "code": "DEMO"
+ },
+ "models": [
+  {
+   "code": "M01",
+   "file": "models/M01.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "2c4501df3b87f0391bb1aa6f8519ad1a719d5c41c0546ad3a2d94483956f60aa",
+   "bbox_min": [
+    -42.3307,
+    -50.8727,
+    465.486
+   ],
+   "bbox_max": [
+    78.7185,
+    50.3905,
+    600.609
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M02",
+   "file": "models/M02.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "e13dc826472f92552b24875761f4f8f203c321cae747301af8a5534c78451325",
+   "bbox_min": [
+    -42.1091,
+    -56.0383,
+    467.326
+   ],
+   "bbox_max": [
+    79.7012,
+    54.7705,
+    600.314
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M03",
+   "file": "models/M03.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "332fe2bc4d56805300e039e7e5650cf38ade51db9e7587a483d186ff59f29818",
+   "bbox_min": [
+    -42.2101,
+    -50.7724,
+    467.83
+   ],
+   "bbox_max": [
+    78.1736,
+    49.2498,
+    597.007
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M04",
+   "file": "models/M04.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "95adb3a5f41cf777ba9d4e1024e6700da8465ff224bac4180e8ca814a393dafd",
+   "bbox_min": [
+    -42.9486,
+    -50.713,
+    465.426
+   ],
+   "bbox_max": [
+    79.9356,
+    50.703,
+    600.698
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M05",
+   "file": "models/M05.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "c8d21b72ab826248d48fb8d60e0613e58d9eb49d70fb437b198bc440a7976118",
+   "bbox_min": [
+    -45.3119,
+    -55.1742,
+    465.806
+   ],
+   "bbox_max": [
+    80.4681,
+    53.3997,
+    603.989
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M06",
+   "file": "models/M06.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "d89ae95dfd79e6cf900141c7406bfc08fcc68c899ee160e042db05232822c84f",
+   "bbox_min": [
+    -48.8391,
+    -53.4628,
+    469.25
+   ],
+   "bbox_max": [
+    78.2597,
+    53.7925,
+    601.773
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M07",
+   "file": "models/M07.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "74ffb6aba483a716417cbe51e31129da684daafcc3f610ca59fe95568e992cf7",
+   "bbox_min": [
+    -41.4799,
+    -51.0784,
+    467.847
+   ],
+   "bbox_max": [
+    77.7019,
+    49.5796,
+    596.972
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M08",
+   "file": "models/M08.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "82d2204788390c83eaafd14afb054eed2efe05955f2c828134230db60c46a432",
+   "bbox_min": [
+    -44.5203,
+    -50.7101,
+    465.528
+   ],
+   "bbox_max": [
+    79.6225,
+    51.3118,
+    601.062
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M09",
+   "file": "models/M09.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "f830942d56a2205699fd02461e329aadce847ce8d0a43b93815d915bb9acf7ac",
+   "bbox_min": [
+    -43.4514,
+    -53.1233,
+    465.344
+   ],
+   "bbox_max": [
+    80.4184,
+    53.4712,
+    600.636
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M10",
+   "file": "models/M10.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "702f17a0e83484c511f25d1cd15432bd72e375cd20a10e8c8a8facd3b81a55e3",
+   "bbox_min": [
+    -41.9106,
+    -48.8294,
+    468.584
+   ],
+   "bbox_max": [
+    78.41,
+    47.32,
+    598.085
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M11",
+   "file": "models/M11.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "ba19b23948991cd4595a38a9a0bb7a80043d386398e85e35abefbe92e779da67",
+   "bbox_min": [
+    -41.8507,
+    -55.2248,
+    467.531
+   ],
+   "bbox_max": [
+    78.6899,
+    54.2217,
+    600.446
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M12",
+   "file": "models/M12.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "5f3d1fe041a3dee66ba9b2f50b291e49681225ccd1b6eaeb41fa7d28534a1154",
+   "bbox_min": [
+    -43.9123,
+    -58.4936,
+    467.039
+   ],
+   "bbox_max": [
+    80.5868,
+    58.136,
+    600.426
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M13",
+   "file": "models/M13.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "b89f2170e868adc0e3db9d9aab9c55a009a7334791338361e0726127d7dd0282",
+   "bbox_min": [
+    -46.5767,
+    -53.6178,
+    465.856
+   ],
+   "bbox_max": [
+    80.4963,
+    51.3846,
+    603.85
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M14",
+   "file": "models/M14.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "d0b580d325fbe0cb7e2e5db5f378a2f77ca5323644be24294ace1ac4782faed0",
+   "bbox_min": [
+    -44.4362,
+    -50.6977,
+    465.687
+   ],
+   "bbox_max": [
+    78.3983,
+    50.9782,
+    601.006
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M15",
+   "file": "models/M15.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "8b637baf36a928a66989606e5cba18a266081fc15f9831e62fde6cd11fbdca5b",
+   "bbox_min": [
+    -43.5857,
+    -50.9092,
+    465.408
+   ],
+   "bbox_max": [
+    80.1941,
+    50.9869,
+    600.713
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M16",
+   "file": "models/M16.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "152891168afbbc4d561de79c4dc501763dc65271baa8ee63b5d34b5a547c43a0",
+   "bbox_min": [
+    -44.1377,
+    -51.5723,
+    465.936
+   ],
+   "bbox_max": [
+    79.4055,
+    48.5197,
+    603.743
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M17",
+   "file": "models/M17.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "8ec38a2b16b99ef9c5dd41fdd4d9f9ff4eb8fb467191a131fe0c7a44f72e3680",
+   "bbox_min": [
+    -41.8396,
+    -54.5306,
+    468.01
+   ],
+   "bbox_max": [
+    78.4067,
+    52.9706,
+    599.732
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M18",
+   "file": "models/M18.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "8cfbe79376a645e63a881e359eb4c8b8d964db3c46fbdc2f05d8b2bafa91bc56",
+   "bbox_min": [
+    -44.7171,
+    -52.0339,
+    465.903
+   ],
+   "bbox_max": [
+    80.0102,
+    49.2473,
+    603.83
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M19",
+   "file": "models/M19.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "be9e7eab7eb5e111d0a61046515b967dbbdde112e6abc56223206f68b15abb8d",
+   "bbox_min": [
+    -41.6578,
+    -54.5195,
+    467.906
+   ],
+   "bbox_max": [
+    78.4555,
+    53.0521,
+    599.748
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M20",
+   "file": "models/M20.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "da119525db8e169408e4b64d3c62e25dc2f9350251a311b5d5ef8992498aa909",
+   "bbox_min": [
+    -42.7135,
+    -55.4644,
+    467.741
+   ],
+   "bbox_max": [
+    79.9662,
+    54.1652,
+    599.761
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M21",
+   "file": "models/M21.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "71c21d4b386f6ba12316d86c5dfdff2529a4d73f79772fad1988aef95c9f2674",
+   "bbox_min": [
+    -46.9803,
+    -52.2681,
+    466.358
+   ],
+   "bbox_max": [
+    78.1064,
+    52.6247,
+    600.743
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M22",
+   "file": "models/M22.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "97c1378673aedf1b7450ecc51800039912b8ed25f1f5070529011703810fc312",
+   "bbox_min": [
+    -41.7287,
+    -57.3001,
+    467.615
+   ],
+   "bbox_max": [
+    80.3119,
+    56.5817,
+    599.76
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M23",
+   "file": "models/M23.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "477c19f4dd51bdd204a79ebbc8cfa03c892eadc979e1e3c9b5864794ad8fc9d2",
+   "bbox_min": [
+    -46.2724,
+    -53.348,
+    465.861
+   ],
+   "bbox_max": [
+    80.4844,
+    51.5075,
+    603.909
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M24",
+   "file": "models/M24.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "1afeb3dc55ce308787da2c36cb3787e0262a4d19ad3228ecb3aaa7d48c475742",
+   "bbox_min": [
+    -42.5717,
+    -50.8609,
+    465.441
+   ],
+   "bbox_max": [
+    79.792,
+    50.626,
+    600.617
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M25",
+   "file": "models/M25.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "0d8c3521c354e92cb0a01db1ead093533ad49ca391c234d78c81aff2a4a1631b",
+   "bbox_min": [
+    -44.7655,
+    -50.5805,
+    466.606
+   ],
+   "bbox_max": [
+    75.2155,
+    50.3702,
+    600.689
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M26",
+   "file": "models/M26.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "f5978385582925cd4423ee0b09caad66274678d29b324d674ddaf8efba6ba134",
+   "bbox_min": [
+    -44.4587,
+    -52.2432,
+    468.514
+   ],
+   "bbox_max": [
+    80.402,
+    51.388,
+    598.236
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M27",
+   "file": "models/M27.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "2fc9f693866f3234f970186ce68c5ec3455f88470d895d093c4c96a718a654ba",
+   "bbox_min": [
+    -43.4063,
+    -51.8231,
+    469.59
+   ],
+   "bbox_max": [
+    77.5196,
+    51.5297,
+    601.696
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M28",
+   "file": "models/M28.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "7d4736abd8440c329281777faf82fbea480223678dc42fefd817a1362a20790e",
+   "bbox_min": [
+    -44.5546,
+    -51.9182,
+    465.904
+   ],
+   "bbox_max": [
+    80.05,
+    49.6756,
+    603.875
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M29",
+   "file": "models/M29.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "ee1bfd717621d5e3904db878f3938ee369e11388ca0f757dadbe73120ee131af",
+   "bbox_min": [
+    -41.9157,
+    -53.2768,
+    466.712
+   ],
+   "bbox_max": [
+    80.0781,
+    51.5814,
+    599.069
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M30",
+   "file": "models/M30.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "cf3d24e09dd1b99b16262ec93d8a91202738c4d96117c3353c6869f620b54051",
+   "bbox_min": [
+    -45.2551,
+    -53.3238,
+    468.444
+   ],
+   "bbox_max": [
+    80.4438,
+    52.5386,
+    598.281
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M31",
+   "file": "models/M31.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "75ba8ae146bb033feb9ac43739e6b900f2575396deabda9cdbf0f4e45f07ec5e",
+   "bbox_min": [
+    -43.4238,
+    -58.5268,
+    467.019
+   ],
+   "bbox_max": [
+    80.5652,
+    58.0279,
+    600.419
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M32",
+   "file": "models/M32.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "40613ecaa8a1f5776556272cb72d5a6218587d788f4bfb7d848c9eec87f9d143",
+   "bbox_min": [
+    -49.0688,
+    -52.2589,
+    466.005
+   ],
+   "bbox_max": [
+    76.5244,
+    53.0387,
+    600.888
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M33",
+   "file": "models/M33.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "a121234b0c3957257cc1afcfa92bf238d766967c6de8a3fe0720b5b635f1387a",
+   "bbox_min": [
+    -43.9075,
+    -51.8882,
+    467.765
+   ],
+   "bbox_max": [
+    78.2725,
+    50.4998,
+    597.045
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M34",
+   "file": "models/M34.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "f35678f240a0fa114347682eddf7e8b0aa3382e865a0768dddb91c5e2aec70d3",
+   "bbox_min": [
+    -49.7671,
+    -52.1831,
+    466.142
+   ],
+   "bbox_max": [
+    77.8311,
+    53.4555,
+    600.904
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M35",
+   "file": "models/M35.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "0888000fd950ef2af4c4406459af4f0b153186eb2aac8ce35360ad0881bbe945",
+   "bbox_min": [
+    -40.192,
+    -47.9246,
+    471.245
+   ],
+   "bbox_max": [
+    73.9559,
+    45.5777,
+    601.465
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M36",
+   "file": "models/M36.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "9f0128b14a79488e35ead21cb1d0bfec7057472ca8a14704dc36c3ee73c3f95e",
+   "bbox_min": [
+    -41.8473,
+    -50.0748,
+    467.077
+   ],
+   "bbox_max": [
+    78.3856,
+    48.0105,
+    598.963
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M37",
+   "file": "models/M37.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "089f872e72e6deaf5887bdd1348dfa66c149e5fd09c9346f8d7fe6c39e6e5c4c",
+   "bbox_min": [
+    -39.5026,
+    -49.7736,
+    467.921
+   ],
+   "bbox_max": [
+    77.6422,
+    48.1919,
+    597.001
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M38",
+   "file": "models/M38.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "8af274b79378806bcd66dc1b0fb65ff30672554cbc75b5dff0536be974d71cb6",
+   "bbox_min": [
+    -46.4557,
+    -53.2357,
+    465.45
+   ],
+   "bbox_max": [
+    80.3604,
+    53.7594,
+    601.13
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M39",
+   "file": "models/M39.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "65f4bd8b0c3a908bb5895ba07fbaea7b817754e2c3509e7caa17927fe8c41dcd",
+   "bbox_min": [
+    -45.1782,
+    -50.6432,
+    465.592
+   ],
+   "bbox_max": [
+    79.7326,
+    51.1636,
+    601.045
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M40",
+   "file": "models/M40.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "5b0c394cff9a770b094e268546a375b9a69df1d3eb8290c9edf486b1600ec8bc",
+   "bbox_min": [
+    -38.4693,
+    -49.3668,
+    467.981
+   ],
+   "bbox_max": [
+    77.2129,
+    47.7261,
+    596.941
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M41",
+   "file": "models/M41.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "8d8c1d394f39ed84e90552f012a0b12df9fc49cc3e3a39275091987a7f4cce3d",
+   "bbox_min": [
+    -43.8506,
+    -51.5935,
+    465.966
+   ],
+   "bbox_max": [
+    78.5928,
+    48.819,
+    603.742
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M42",
+   "file": "models/M42.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "130aeae860b44470e0b19f9d6c31ef00c47a7fb1f7cf9bf062b41aa8c8b393cd",
+   "bbox_min": [
+    -46.0184,
+    -50.8087,
+    465.563
+   ],
+   "bbox_max": [
+    80.0397,
+    51.4053,
+    601.074
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M43",
+   "file": "models/M43.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "2481bf456fba1ee8aa0ee33e9ec455597ea432d23d06499ecfb7b4f659532183",
+   "bbox_min": [
+    -46.2479,
+    -53.0774,
+    469.424
+   ],
+   "bbox_max": [
+    77.726,
+    53.1079,
+    601.687
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M44",
+   "file": "models/M44.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "b3916b4b14d3875f2e9878e366100d6083b585730d42b4f514403916de98f70f",
+   "bbox_min": [
+    -42.1074,
+    -48.6057,
+    468.564
+   ],
+   "bbox_max": [
+    78.5001,
+    47.2459,
+    598.164
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M45",
+   "file": "models/M45.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "ca6c06ce7444c5508ffa3e2cd4a7b8154c0bedb176bf6bba2a8be216eeda559c",
+   "bbox_min": [
+    -44.329,
+    -49.7244,
+    470.756
+   ],
+   "bbox_max": [
+    75.3016,
+    48.4535,
+    601.652
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M46",
+   "file": "models/M46.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "a710b491f1d583838de9fa28350ce8df611f62c71ad404016ee7a27a84e80cfe",
+   "bbox_min": [
+    -41.9015,
+    -54.8898,
+    467.759
+   ],
+   "bbox_max": [
+    79.5771,
+    53.6561,
+    599.747
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M47",
+   "file": "models/M47.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "8043d89fa7de2db27e49ecc184bd998bda90f40933b7b9b7ecb47bdcb4069c62",
+   "bbox_min": [
+    -38.9103,
+    -56.0756,
+    467.698
+   ],
+   "bbox_max": [
+    79.8696,
+    55.2097,
+    599.839
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M48",
+   "file": "models/M48.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "50b1f8771282547cab941cd194edf9affc3e9792587b58c6b5e69311cb3db4e8",
+   "bbox_min": [
+    -43.2945,
+    -51.4274,
+    466.438
+   ],
+   "bbox_max": [
+    77.5382,
+    51.7115,
+    600.764
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M49",
+   "file": "models/M49.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "0266c51deff65025d82a76f2fc284ae2d63a6098ba4a240e59c04ff6df4d67b1",
+   "bbox_min": [
+    -48.1073,
+    -53.2374,
+    466.298
+   ],
+   "bbox_max": [
+    78.1686,
+    53.5521,
+    600.864
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M50",
+   "file": "models/M50.bin",
+   "faces": "faces/94a6a36e0f5b062a.bin",
+   "n_vertices": 69576,
+   "n_faces": 137360,
+   "sha256_bin": "94ca3c87a1e6b99ae1b78797401caea68752c6bd5a25b0e7b497a6fff5884e16",
+   "bbox_min": [
+    -44.9082,
+    -52.7541,
+    466.341
+   ],
+   "bbox_max": [
+    77.5778,
+    52.9691,
+    600.812
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M51",
+   "file": "models/M51.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "a8ef035e0c46700082b8e856353cdf3e4e97eda730e87b38f5e656193cbc647c",
+   "bbox_min": [
+    -42.2313,
+    -49.0013,
+    468.572
+   ],
+   "bbox_max": [
+    79.4719,
+    47.6805,
+    598.096
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M52",
+   "file": "models/M52.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "fe6aec52cb599987542ca3e493b9c5bc0bfb4fb4613029a89b475fb42fb78eef",
+   "bbox_min": [
+    -41.1008,
+    -53.2317,
+    466.712
+   ],
+   "bbox_max": [
+    79.9969,
+    51.4253,
+    599.074
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M53",
+   "file": "models/M53.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "56a4cbc69a47b5ab8f233ffade3e09fbc5c8baeec025d91cd3b7036c27dbbc41",
+   "bbox_min": [
+    -41.6475,
+    -57.8586,
+    467.137
+   ],
+   "bbox_max": [
+    80.1682,
+    57.3754,
+    600.447
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M54",
+   "file": "models/M54.bin",
+   "faces": "faces/52f3fd7f9a2ea974.bin",
+   "n_vertices": 69550,
+   "n_faces": 137344,
+   "sha256_bin": "bf72d6ab19dbb8975581a745d695137a3cadfb7322458c32ec991308bc27e412",
+   "bbox_min": [
+    -47.0023,
+    -52.5831,
+    469.333
+   ],
+   "bbox_max": [
+    78.1585,
+    52.6638,
+    601.743
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M55",
+   "file": "models/M55.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "9785e960bb6d079a8f680934a3230c2c744a6d573e9ae5958f31467a3f68b803",
+   "bbox_min": [
+    -45.1383,
+    -55.0977,
+    465.805
+   ],
+   "bbox_max": [
+    80.4574,
+    53.514,
+    603.93
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M56",
+   "file": "models/M56.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "feb2070636883bbfeb844559f00001e6e1ff8c50d14bafc9046730314b976fd9",
+   "bbox_min": [
+    -44.0316,
+    -51.6072,
+    465.963
+   ],
+   "bbox_max": [
+    78.5343,
+    48.6075,
+    603.7
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M57",
+   "file": "models/M57.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "307158f6cd37214755b60d9445bced42c5279ad592928487dbb36fde3bc23239",
+   "bbox_min": [
+    -41.7374,
+    -50.2701,
+    466.986
+   ],
+   "bbox_max": [
+    78.9709,
+    48.1921,
+    598.903
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M58",
+   "file": "models/M58.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "166816c82cbed315363965540a3556930dfb63316592b340a89728cdcdc5cb4e",
+   "bbox_min": [
+    -42.0766,
+    -50.1403,
+    466.888
+   ],
+   "bbox_max": [
+    79.3651,
+    48.2769,
+    598.998
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M59",
+   "file": "models/M59.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "a1937a87ab69e90d54a0866711700bb3586df3e2975b5b5fe92d5a44b830fc1c",
+   "bbox_min": [
+    -42.0326,
+    -54.9077,
+    467.842
+   ],
+   "bbox_max": [
+    79.4704,
+    53.451,
+    599.728
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M60",
+   "file": "models/M60.bin",
+   "faces": "faces/2984f1d4a823f744.bin",
+   "n_vertices": 69558,
+   "n_faces": 137312,
+   "sha256_bin": "f33417431b6a714dac8dacb324f36ad20d25cdc143750e0c20f7e85f65302da0",
+   "bbox_min": [
+    -41.6596,
+    -50.2804,
+    467.127
+   ],
+   "bbox_max": [
+    78.2682,
+    48.0675,
+    598.889
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M61",
+   "file": "models/M61.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "22f106f2f024c164ec10b5ae0bd9da79191e6a2750d0f08543f17e817142d3bb",
+   "bbox_min": [
+    -43.9754,
+    -50.905,
+    465.566
+   ],
+   "bbox_max": [
+    78.3394,
+    51.0507,
+    601.029
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M62",
+   "file": "models/M62.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "33016fbd550d2eae52d57641e07c295be646676422a5da226e4619d705b44099",
+   "bbox_min": [
+    -42.502,
+    -48.5301,
+    467.828
+   ],
+   "bbox_max": [
+    76.1736,
+    46.8058,
+    596.901
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M63",
+   "file": "models/M63.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "1627051b19bf19d596cf32687a46bbc623c557e110387c91d4de9b7956e77dc2",
+   "bbox_min": [
+    -43.1427,
+    -51.0309,
+    465.419
+   ],
+   "bbox_max": [
+    80.1128,
+    50.9231,
+    600.639
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M64",
+   "file": "models/M64.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "d9536431b2ed91f8f78732d1877de16ea21ccbafc502c1c9b61cda1fa047694d",
+   "bbox_min": [
+    -42.2933,
+    -55.9201,
+    467.242
+   ],
+   "bbox_max": [
+    79.9142,
+    55.0732,
+    600.484
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M65",
+   "file": "models/M65.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "4f730425506270c544212d2c44034f28c8f5ebbf7f99db789f1bd34a3770b57a",
+   "bbox_min": [
+    -42.5854,
+    -50.6704,
+    465.472
+   ],
+   "bbox_max": [
+    78.8243,
+    50.4669,
+    600.688
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M66",
+   "file": "models/M66.bin",
+   "faces": "faces/2c52c561d73faa3a.bin",
+   "n_vertices": 72797,
+   "n_faces": 143696,
+   "sha256_bin": "df0672a93e1fdcf0c09814cca0b100fe550879e881007dacaec9c16f429129fe",
+   "bbox_min": [
+    -42.3984,
+    -57.9465,
+    467.494
+   ],
+   "bbox_max": [
+    80.3232,
+    57.1348,
+    599.832
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M67",
+   "file": "models/M67.bin",
+   "faces": "faces/fb85e4cb45c81119.bin",
+   "n_vertices": 69834,
+   "n_faces": 137824,
+   "sha256_bin": "6b98ef73871f9f5b755ccfc145438d107174f27cbc896fbf6ae24e2b7335ffa4",
+   "bbox_min": [
+    -38.2805,
+    -47.0222,
+    467.931
+   ],
+   "bbox_max": [
+    74.8749,
+    43.9921,
+    596.664
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M68",
+   "file": "models/M68.bin",
+   "faces": "faces/5ab51c8fb7bdd480.bin",
+   "n_vertices": 69761,
+   "n_faces": 137680,
+   "sha256_bin": "04f54b240819563da66db615245798436a0575ec0e62df5f2ed578f8dcb1298f",
+   "bbox_min": [
+    -44.0039,
+    -51.503,
+    465.933
+   ],
+   "bbox_max": [
+    79.5763,
+    48.8331,
+    603.799
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M69",
+   "file": "models/M69.bin",
+   "faces": "faces/032af89699531beb.bin",
+   "n_vertices": 69541,
+   "n_faces": 137296,
+   "sha256_bin": "739ebbfcbf69222729cc70f872d8622cafadef036c5ce2ed237a891f2ca8822e",
+   "bbox_min": [
+    -42.6838,
+    -53.2263,
+    465.337
+   ],
+   "bbox_max": [
+    80.3623,
+    53.19,
+    600.7
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M70",
+   "file": "models/M70.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "e0fd358511682338ea4b08f9637d92de4d661e8c1f945f0679ab36d2fc7b2ed4",
+   "bbox_min": [
+    -45.3679,
+    -50.8259,
+    465.511
+   ],
+   "bbox_max": [
+    79.9845,
+    51.5755,
+    601.092
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M71",
+   "file": "models/M71.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "7fb01b3a8a04199c38068ef9b5f20807be6889673635f3aabd01c24d70d9d0ab",
+   "bbox_min": [
+    -42.6444,
+    -48.904,
+    468.556
+   ],
+   "bbox_max": [
+    79.6867,
+    47.7231,
+    598.19
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M72",
+   "file": "models/M72.bin",
+   "faces": "faces/efaf87d14bdf9725.bin",
+   "n_vertices": 69536,
+   "n_faces": 137232,
+   "sha256_bin": "91c227bd8c6f90e3ffac8181cd441a5f1e78e0f4915b8f1e97684b999e25e51b",
+   "bbox_min": [
+    -41.8247,
+    -55.4048,
+    467.623
+   ],
+   "bbox_max": [
+    78.511,
+    54.0414,
+    600.28
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M73",
+   "file": "models/M73.bin",
+   "faces": "faces/e9849c1a65268665.bin",
+   "n_vertices": 69766,
+   "n_faces": 137728,
+   "sha256_bin": "abf15b7363a542ab2fc0ac46ea68ff8f89fc917874308b834650ee9929dbe618",
+   "bbox_min": [
+    -45.7141,
+    -53.3045,
+    465.424
+   ],
+   "bbox_max": [
+    80.3105,
+    53.6226,
+    601.135
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  },
+  {
+   "code": "M74",
+   "file": "models/M74.bin",
+   "faces": "faces/02c90a78636a0de9.bin",
+   "n_vertices": 69780,
+   "n_faces": 137776,
+   "sha256_bin": "c81969ef0c67c6e818e12b597b8583ef213ea4dd9d65a498b97a1951f5e7603a",
+   "bbox_min": [
+    -41.9397,
+    -51.3589,
+    468.539
+   ],
+   "bbox_max": [
+    79.9212,
+    50.51,
+    598.176
+   ],
+   "max_float32_error_mm": 3.0273437459982233e-05
+  }
+ ]
+}
