@@ -985,7 +985,7 @@
     import * as THREE from 'three';
     import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
-    const APP_VERSION = '0.5.0';
+    const APP_VERSION = '0.5.1';
     const CONFIG = Object.assign({endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null, observers: [], referencePoints: null}, window.SIV_CONFIG || {});
     /* Encuadre inicial de cada vista. zoom: 1 = cabeza completa en pantalla; 2 = el doble de cerca.
        center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
@@ -1523,14 +1523,19 @@
 
     function observerFor(code) {return OBSERVERS.find((o) => o.code === code) || null;}
     /* Si el observador tiene perfil o experiencia fijados en config.js, se ocultan esos campos */
+    /* Con lista de observadores: no se muestra nada hasta elegir un nombre.
+       El perfil sale de config.js (si está); los años de experiencia los escribe siempre
+       el propio clínico, y solo se piden si el perfil es clínico. */
     function syncProfileFields() {
-      const o = observerFor($('f-code').value.trim().toUpperCase());
+      const code = $('f-code').value.trim().toUpperCase();
+      const o = observerFor(code);
+      const chosen = !OBSERVERS.length || !!o;
       const fixedGroup = !!(o && o.profile);
       if (fixedGroup) $('f-group').value = o.profile;
-      $('group-field').hidden = fixedGroup;
-      const fixedExp = !!(o && o.experience !== null);
-      if (fixedExp) $('f-exp').value = o.experience;
-      $('exp-field').hidden = $('f-group').value !== 'clinico' || fixedExp;
+      $('group-field').hidden = !chosen || fixedGroup;
+      const clinico = $('f-group').value === 'clinico';
+      $('exp-field').hidden = !chosen || !clinico;
+      if (!clinico) $('f-exp').value = '';
     }
     function readSetup() {
       const code = $('f-code').value.trim().toUpperCase();
@@ -1543,7 +1548,7 @@
         group,
         device: $('f-device').value,
         device_auto: DEVICE_INFO.auto,
-        experience: group !== 'clinico' ? null : (o && o.experience !== null ? o.experience : ($('f-exp').value === '' ? null : Number($('f-exp').value))),
+        experience: group !== 'clinico' || $('f-exp').value === '' ? null : Number($('f-exp').value),
       };
     }
     function updateResumeNote() {

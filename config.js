@@ -16,9 +16,9 @@ window.SIV_CONFIG = {
   // si los rellenas aquí, la persona ya no tiene que indicarlos en el formulario.
   // Si dejas la lista vacía ( observers: [], ) se vuelve a pedir un código escrito.
   observers: [
-    { code: "OBS01", name: "Nombre Apellido 1", profile: "clinico", experience: 10 },
-    { code: "OBS02", name: "Nombre Apellido 2", profile: "clinico", experience: 5 },
-    { code: "OBS03", name: "Nombre Apellido 3", profile: "clinico", experience: 2 },
+    { code: "OBS01", name: "Nombre Apellido 1", profile: "clinico" },
+    { code: "OBS02", name: "Nombre Apellido 2", profile: "clinico" },
+    { code: "OBS03", name: "Nombre Apellido 3", profile: "clinico" },
     { code: "OBS04", name: "Nombre Apellido 4", profile: "no_especialista" },
     { code: "OBS05", name: "Nombre Apellido 5", profile: "no_especialista" },
     { code: "OBS06", name: "Nombre Apellido 6", profile: "no_especialista" },
