@@ -391,6 +391,10 @@
       font-size: 12px;
     }
 
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -762,6 +766,51 @@
       color: var(--ink);
     }
 
+    .tut-visual {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tut-card .tut-visual svg {
+      width: 92px;
+      height: 130px;
+    }
+
+    figure.ref {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .ref-img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 6px;
+      background: var(--viewer-bg);
+      border: 1px solid var(--line);
+    }
+
+    .ref-cap {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .lm-card figure.ref {
+      grid-column: 1 / -1;
+    }
+
+    .lm-card .ref-img {
+      aspect-ratio: 16 / 10;
+    }
+
     .tut-card h3 {
       margin: 0;
       font-size: 16px;
@@ -936,8 +985,8 @@
     import * as THREE from 'three';
     import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
-    const APP_VERSION = '0.4.2';
-    const CONFIG = Object.assign({endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null}, window.SIV_CONFIG || {});
+    const APP_VERSION = '0.5.0';
+    const CONFIG = Object.assign({endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null, observers: [], referencePoints: null}, window.SIV_CONFIG || {});
     /* Encuadre inicial de cada vista. zoom: 1 = cabeza completa en pantalla; 2 = el doble de cerca.
        center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
        Se pueden sobrescribir desde config.js (views.sellion / views.tragion). */
@@ -946,6 +995,27 @@
       tragion: Object.assign({zoom: 1.45, center: [0.42, 0.5, 0.42]}, CONFIG.views.tragion || {}),
     };
     const DEMO_KEY = 'DEMO';
+    const OBSERVERS = (Array.isArray(CONFIG.observers) ? CONFIG.observers : [])
+      .filter((o) => o && o.code && o.name)
+      .map((o) => ({code: String(o.code).trim().toUpperCase(), name: String(o.name), profile: o.profile || null, experience: Number.isFinite(Number(o.experience)) && o.experience !== '' && o.experience !== null ? Number(o.experience) : null}));
+    /* Vértice (índice 0-based del OBJ demo) donde se marca cada landmark en las imágenes de referencia */
+    const REF_POINTS = Object.assign({sellion: 4844, tragion_der: 39172, tragion_izq: 64398}, CONFIG.referencePoints || {});
+    const DEVICES = [
+      ['ordenador_raton', 'Ordenador con ratón'],
+      ['ordenador_trackpad', 'Ordenador con trackpad (panel táctil)'],
+      ['tablet', 'Tablet'],
+      ['movil', 'Móvil'],
+    ];
+    function detectDevice() {
+      const fine = window.matchMedia('(any-pointer: fine)').matches;
+      const coarse = window.matchMedia('(any-pointer: coarse)').matches;
+      const small = Math.min(screen.width, screen.height);
+      let auto = 'ordenador';
+      if (coarse && !fine) auto = small < 600 ? 'movil' : 'tablet';
+      return {auto, fine, coarse, touchPoints: navigator.maxTouchPoints || 0};
+    }
+    const DEVICE_INFO = detectDevice();
+    const IS_TOUCH = DEVICE_INFO.coarse && !DEVICE_INFO.fine;
     const CONFIG_PROBLEM = window.__sivConfigError ? `config.js tiene un error y no se ha aplicado: ${window.__sivConfigError}. Revisa comas y comillas.`
       : (!window.SIV_CONFIG ? 'No se ha cargado config.js: se usan los valores por defecto.' : null);
     if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(CONFIG.endpoint || '')) CONFIG.endpoint = '';   // sin URL válida: modo local
@@ -1219,7 +1289,7 @@
             body: JSON.stringify({token: CONFIG.token, action: 'append', ...payload}),
           });
           const out = await res.json();
-          if (!out.ok) throw new Error(out.error || 'El  rechazó los datos');
+          if (!out.ok) throw new Error(out.error || 'El servidor rechazó los datos');
           return out.stored || payload.rows.map((r) => r.row_id);
         }
         if (this.kind === 'claude') {
@@ -1231,7 +1301,7 @@
           for (const r of payload.rows) await base.collection('rows').doc(r.row_id).set(r);
           return payload.rows.map((r) => r.row_id);
         }
-        throw new Error('Sin  configurado');
+        throw new Error('Sin servidor configurado');
       },
       async progress(code, session) {
         if (this.kind === 'sheets') {
@@ -1252,7 +1322,7 @@
       },
     };
 
-    /* Cola de salida: nada se da por enviado hasta que el  lo confirma */
+    /* Cola de salida: nada se da por enviado hasta que el servidor lo confirma */
     const outbox = {
       items: store.get(OUTBOX_KEY) || {rows: [], sessions: []},
       sending: false, lastError: null,
@@ -1284,10 +1354,11 @@
       if (backend.kind === 'local') {chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return;}
       if (outbox.sending) {chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return;}
       if (outbox.pending) {chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return;}
-      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor: conectado' : 'Copia en servidor: actualizada';
+      chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor del estudio: todo enviado' : 'Copia en servidor: al día';
       if (state.screen === 'end') renderEnd();
     }
 
+    if (IS_TOUCH) $('viewer-hint').innerHTML = '<span><kbd>un dedo</kbd> girar</span><span><kbd>pellizcar</kbd> zoom</span><span><kbd>dos dedos</kbd> desplazar</span>';
     /* ── Interacción en el visor ────────────────────────────────────────── */
     const canvas = viewer.renderer.domElement;
     let down = null, hoverQueued = false, lastMove = null;
@@ -1296,7 +1367,7 @@
       if (!down || e.button !== 0) return;
       const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
       down = null;
-      if (state.screen === 'annotate' && moved < 5 && dt < 700) placeAt(e.clientX, e.clientY);
+      if (state.screen === 'annotate' && moved < 5 && dt < 700) placeAt(e.clientX, e.clientY, e.pointerType || 'desconocido');
     });
     canvas.addEventListener('pointermove', (e) => {
       if (state.screen !== 'annotate' || e.buttons) return;
@@ -1316,7 +1387,7 @@
       if (state.screen === 'annotate' && st && LANDMARKS.some((l) => st.steps[l.key].hit)) {e.preventDefault(); e.returnValue = '';}
     });
 
-    function placeAt(x, y) {
+    function placeAt(x, y, pointerType) {
       const st = state.current; if (!st) return;
       const lm = LANDMARKS[st.stepIdx], s = st.steps[lm.key];
       if (s.confirmed) return;
@@ -1325,6 +1396,8 @@
       if (!s.tFirst) s.tFirst = performance.now();
       s.nPlacements++;
       s.hit = hit;
+      s.pointerType = pointerType;
+      s.pointerTypes = Array.from(new Set([...(s.pointerTypes || []), pointerType]));
       s.camera = viewer.cameraState();
       s.viewport = [viewer.el.clientWidth, viewer.el.clientHeight];
       viewer.setMarker(lm.key, hit.point);
@@ -1338,7 +1411,68 @@
     function showReadout(text) {const r = $('readout'); r.hidden = !text; r.textContent = text || '';}
     async function showDemo(label = 'Modelo de práctica') {
       if (!MANIFEST) return;
-      try {viewer.setGeometry(await loadEntryGeometry(MANIFEST.demo)); viewer.setView('overview'); setViewTag(null, label);} catch (e) {console.warn(e);}
+      try {
+        const g = await loadEntryGeometry(MANIFEST.demo);
+        if (!Object.keys(REF_IMAGES).length) buildReferenceImages(g);
+        viewer.setGeometry(g); viewer.setView('overview'); setViewTag(null, label);
+      } catch (e) {console.warn(e);}
+    }
+
+    /* ── Imágenes de referencia ─────────────────────────────────────────────
+       Si config.js da una foto propia (landmarks.<id>.photo) se usa esa.
+       Si no, se genera aquí una imagen del modelo de práctica con el punto marcado
+       en el vértice REF_POINTS[<id>]. */
+    const REF_IMAGES = {};
+    function refImageHtml(lm) {
+      const t = CONFIG.landmarks[lm.id] || {};
+      const photo = typeof t.photo === 'string' && t.photo.trim() ? t.photo.trim() : '';
+      const src = photo || REF_IMAGES[lm.id];
+      if (!src) return '';
+      const cap = typeof t.photoCaption === 'string' ? t.photoCaption : (photo ? '' : 'Ejemplo sobre el modelo de práctica');
+      return `<figure class="ref"><img class="ref-img" src="${esc(src)}" alt="${esc(lm.label)} marcado en una imagen de referencia">${cap ? `<figcaption class="ref-cap">${cap}</figcaption>` : ''}</figure>`;
+    }
+    function buildReferenceImages(geom) {
+      let r;
+      try {
+        const W = 640, H = 480;
+        r = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+        r.setPixelRatio(1); r.setSize(W, H, false);
+        r.setClearColor(new THREE.Color(cssVar('--viewer-bg') || '#c3ced2'), 1);
+        const scene = new THREE.Scene();
+        const cam = new THREE.PerspectiveCamera(30, W / H, 1, 5000); cam.up.set(0, 0, 1);
+        scene.add(cam);
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x50606a, 1.15));
+        scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+        const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(0.35, 0.55, 1); cam.add(key);
+        const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-0.6, -0.2, -0.4); cam.add(rim);
+        scene.add(new THREE.Mesh(geom, viewer.material));
+        const pos = geom.getAttribute('position');
+        const diag = geom.boundingBox.getSize(new THREE.Vector3()).length();
+        // Dirección desde la que se mira cada punto (X anterior, Y izquierda, Z superior) y distancia (× diagonal)
+        const SHOT = {
+          sellion: {dir: [0.5, -0.85, 0.1], dist: 0.55},   // perfil derecho oblicuo: se ve el ángulo nasofrontal
+          tragion_der: {dir: [0.15, -1, 0.1], dist: 0.42},
+          tragion_izq: {dir: [0.15, 1, 0.1], dist: 0.42},
+        };
+        for (const lm of LANDMARKS) {
+          const idx = Number(REF_POINTS[lm.id]);
+          if (!Number.isInteger(idx) || idx < 0 || idx >= pos.count) continue;
+          const p = new THREE.Vector3().fromBufferAttribute(pos, idx);
+          const d = new THREE.Vector3(...SHOT[lm.id].dir).normalize();
+          const color = new THREE.Color(cssVar(lm.color));
+          const rad = diag * 0.0055;
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(rad, 24, 16), new THREE.MeshStandardMaterial({color, roughness: 0.35, emissive: 0x111111}));
+          const ring = new THREE.Mesh(new THREE.RingGeometry(rad * 2.0, rad * 2.9, 48), new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.95, depthTest: false}));
+          dot.position.copy(p); scene.add(dot);
+          cam.position.copy(p).addScaledVector(d, diag * SHOT[lm.id].dist); cam.lookAt(p);
+          ring.position.copy(p); ring.quaternion.copy(cam.quaternion); scene.add(ring);
+          r.render(scene, cam);
+          REF_IMAGES[lm.id] = r.domElement.toDataURL('image/jpeg', 0.9);
+          scene.remove(dot, ring);
+          dot.geometry.dispose(); dot.material.dispose(); ring.geometry.dispose(); ring.material.dispose();
+        }
+      } catch (e) {console.warn('No se pudieron generar las imágenes de referencia', e);}
+      finally {try {r?.dispose(); r?.forceContextLoss();} catch { } }
     }
 
     /* ── Pantalla 1: preparación ────────────────────────────────────────── */
@@ -1352,14 +1486,17 @@
     <div class="section">
       <span class="eyebrow">Antes de empezar</span>
       <h2>Identificación del observador</h2>
-      <p>Escribe el código que te ha dado el equipo del estudio. Si ya empezaste otro día, usa el mismo código y la misma sesión para continuar donde lo dejaste.</p>
+      <p>${OBSERVERS.length ? 'Elige tu nombre en la lista.' : 'Escribe el código que te ha dado el equipo del estudio.'} Si ya empezaste otro día, elige la misma sesión para continuar donde lo dejaste.</p>
     </div>
     <form class="section" id="setup-form" novalidate>
       <div class="grid-2">
-        <div class="field"><label for="f-code">Código de observador</label><input id="f-code" name="code" autocomplete="off" placeholder="p. ej. OBS01" value="${esc(r.code || '')}" required><small>Sin espacios en blanco.</small></div>
+        ${OBSERVERS.length
+          ? `<div class="field full"><label for="f-code">Observador</label><select id="f-code"><option value="">Elige tu nombre…</option>${OBSERVERS.map((o) => `<option value="${esc(o.code)}"${r.code === o.code ? ' selected' : ''}>${esc(o.name)}</option>`).join('')}</select></div>`
+          : `<div class="field"><label for="f-code">Código de observador</label><input id="f-code" name="code" autocomplete="off" placeholder="p. ej. OBS01" value="${esc(r.code || '')}" required><small>Sin nombres. Letras, números, guiones.</small></div>`}
         <div class="field"><label for="f-session">Sesión</label><select id="f-session"><option value="1"${r.session == 2 ? '' : ' selected'}>1 · primera</option><option value="2"${r.session == 2 ? ' selected' : ''}>2 · repetición</option></select></div>
-        <div class="field"><label for="f-group">Perfil</label><select id="f-group"><option value="clinico"${r.group === 'no_especialista' ? '' : ' selected'}>Clínico/a</option><option value="no_especialista"${r.group === 'no_especialista' ? ' selected' : ''}>No especialista</option></select></div>
+        <div class="field" id="group-field"><label for="f-group">Perfil</label><select id="f-group"><option value="clinico"${r.group === 'no_especialista' ? '' : ' selected'}>Clínico/a</option><option value="no_especialista"${r.group === 'no_especialista' ? ' selected' : ''}>No especialista</option></select></div>
         <div class="field" id="exp-field"${r.group === 'no_especialista' ? ' hidden' : ''}><label for="f-exp">Experiencia clínica (años)</label><input id="f-exp" type="number" min="0" max="60" step="1" inputmode="numeric" value="${esc(r.experience ?? '')}"></div>
+        <div class="field full" id="device-field"><label for="f-device">Dispositivo que estás usando</label><select id="f-device"><option value="">Elige uno…</option>${DEVICES.map(([v, t]) => `<option value="${v}"${(r.device || '') === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
       </div>
       <div id="resume-note"></div>
     </form>
@@ -1375,21 +1512,38 @@
       <button class="btn btn-primary btn-block" id="go-tutorial" type="button">Continuar a las instrucciones</button>
       <small class="muted">Se descargan unos ${mb} MB a lo largo de la sesión.</small>
     </div>`;
-      $('f-group').addEventListener('change', () => {$('exp-field').hidden = $('f-group').value !== 'clinico';});
-      $('f-code').addEventListener('input', updateResumeNote);
+      $('f-group').addEventListener('change', syncProfileFields);
+      $('f-code').addEventListener(OBSERVERS.length ? 'change' : 'input', () => {syncProfileFields(); updateResumeNote();});
+      syncProfileFields();
       $('f-session').addEventListener('change', updateResumeNote);
+      $('f-device').addEventListener('change', () => {$('setup-error').textContent = '';});
       $('go-tutorial').addEventListener('click', submitSetup);
       updateResumeNote();
     }
 
+    function observerFor(code) {return OBSERVERS.find((o) => o.code === code) || null;}
+    /* Si el observador tiene perfil o experiencia fijados en config.js, se ocultan esos campos */
+    function syncProfileFields() {
+      const o = observerFor($('f-code').value.trim().toUpperCase());
+      const fixedGroup = !!(o && o.profile);
+      if (fixedGroup) $('f-group').value = o.profile;
+      $('group-field').hidden = fixedGroup;
+      const fixedExp = !!(o && o.experience !== null);
+      if (fixedExp) $('f-exp').value = o.experience;
+      $('exp-field').hidden = $('f-group').value !== 'clinico' || fixedExp;
+    }
     function readSetup() {
-      const group = $('f-group').value;
+      const code = $('f-code').value.trim().toUpperCase();
+      const o = observerFor(code);
+      const group = (o && o.profile) || $('f-group').value;
       return {
-        code: $('f-code').value.trim().toUpperCase(),
+        code,
+        name: o ? o.name : '',
         session: Number($('f-session').value),
         group,
-        device: 'raton',
-        experience: group !== 'clinico' || $('f-exp').value === '' ? null : Number($('f-exp').value),
+        device: $('f-device').value,
+        device_auto: DEVICE_INFO.auto,
+        experience: group !== 'clinico' ? null : (o && o.experience !== null ? o.experience : ($('f-exp').value === '' ? null : Number($('f-exp').value))),
       };
     }
     function updateResumeNote() {
@@ -1404,7 +1558,9 @@
       const r = readSetup();
       const err = $('setup-error');
       err.textContent = '';
+      if (OBSERVERS.length && !observerFor(r.code)) {err.textContent = 'Elige tu nombre en la lista de observadores.'; $('f-code').focus(); return;}
       if (!/^[A-Z0-9_-]{2,20}$/.test(r.code)) {err.textContent = 'Escribe un código de observador de 2 a 20 caracteres (letras, números, guion o guion bajo).'; $('f-code').focus(); return;}
+      if (!r.device) {err.textContent = 'Indica qué dispositivo estás usando.'; $('f-device').focus(); return;}
       if (r.group === 'clinico' && (r.experience === null || !(r.experience >= 0 && r.experience <= 60))) {err.textContent = 'Indica los años de experiencia clínica (0 si estás empezando).'; $('f-exp').focus(); return;}
       state.rater = r; state.practice = $('f-practice').checked;
 
@@ -1444,18 +1600,17 @@
       state.totalReal = MANIFEST.models.length;
       state.qi = 0;
       const chip = $('chip-rater'); chip.hidden = false;
-      chip.innerHTML = `<b>${esc(r.code)}</b> sesión ${r.session}`;
-      outbox.add([], [{session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, session: r.session, group: r.group, device: r.device, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}`}]);
+      chip.innerHTML = `<b>${esc(r.name || r.code)}</b> sesión ${r.session}`;
+      outbox.add([], [{session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, rater_name: r.name, session: r.session, group: r.group, device: r.device, device_auto: r.device_auto, pointer_fine: DEVICE_INFO.fine, touch_points: DEVICE_INFO.touchPoints, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}`}]);
       prefetch(state.queue[0]?.entry); prefetch(state.queue[1]?.entry);
       if (!state.queue.length) return renderEnd();
       openTutorial();
     }
 
     const DEFAULT_RULES = [
-      '<b>Haz clic sobre la superficie</b> para colocar el punto. Si no te convence, vuelve a hacer clic en otro sitio: el punto se mueve.',
+      '<b>Haz clic (o toca) sobre la superficie</b> para colocar el punto. Si no te convence, vuelve a hacerlo en otro sitio: el punto se mueve.',
       'Cuando estés conforme, pulsa <b>Confirmar</b>. Antes de guardar el modelo puedes volver a un landmark confirmado pulsándolo en la lista.',
       'Al pulsar <b>Guardar y continuar</b> el modelo queda guardado y cerrado; no se puede revisar.',
-      'Usa <b>un ratón con rueda</b>; no uses trackpad ni pantalla táctil.',
       'Trabaja a tu ritmo. Te propondremos una pausa cada {pausa} modelos, y puedes cerrar la página cuando quieras: lo guardado se conserva.',
       'Derecha e izquierda son siempre <b>del paciente</b>.',
     ];
@@ -1473,7 +1628,7 @@
     <div class="tut-grid">
       ${LANDMARKS.map((lm, i) => `
         <article class="tut-card">
-          ${lmSvg(lm, 'tut')}
+          ${refImageHtml(lm) ? `<div class="tut-visual">${lmSvg(lm, 'tut')}${refImageHtml(lm)}</div>` : lmSvg(lm, 'tut')}
           <span class="view">${i + 1} · ${esc(lm.viewLabel)}</span>
           <h3><span class="swatch" style="background:var(${lm.color})"></span>${esc(lm.label)}</h3>
           <p>${lm.def}</p>
@@ -1491,10 +1646,15 @@
       <div class="section" style="gap:8px">
         <span class="eyebrow">Controles del visor</span>
         <dl class="controls-help">
+          ${IS_TOUCH ? `
+          <dt>tocar</dt><dd>colocar o mover el punto</dd>
+          <dt>un dedo</dt><dd>girar el modelo</dd>
+          <dt>pellizcar</dt><dd>acercar o alejar</dd>
+          <dt>dos dedos</dt><dd>desplazar la vista</dd>` : `
           <dt>clic</dt><dd>colocar o mover el punto</dd>
           <dt>arrastrar</dt><dd>girar el modelo</dd>
           <dt>rueda</dt><dd>acercar hacia el cursor</dd>
-          <dt>botón derecho</dt><dd>desplazar la vista</dd>
+          <dt>botón derecho</dt><dd>desplazar la vista</dd>`}
         </dl>
       </div>
     </div>
@@ -1514,6 +1674,7 @@
       const item = state.queue[state.qi];
       state.screen = 'annotate';
       state.current = null;
+      try {window.scrollTo({top: 0, behavior: 'instant'});} catch {window.scrollTo(0, 0);}   // en móvil, que el visor quede a la vista
       $('viewer').dataset.mode = 'annotate';
       $('viewer-loading').hidden = false;
       showReadout(null);
@@ -1575,9 +1736,10 @@
       <div class="lm-card" style="border-left: 3px solid var(${lm.color})">
         ${lmSvg(lm)}
         <div><h3>${esc(lm.label)}</h3><p>${lm.def}</p><p>${lm.tip}</p></div>
+        ${refImageHtml(lm)}
       </div>
       <div class="section">
-        <button class="btn btn-primary btn-block" type="button" id="confirm" ${s.hit ? '' : 'disabled'}>${s.hit ? `Confirmar ${esc(lm.label.toLowerCase())}` : 'Haz clic en el modelo para colocar el punto'}</button>
+        <button class="btn btn-primary btn-block" type="button" id="confirm" ${s.hit ? '' : 'disabled'}>${s.hit ? `Confirmar ${esc(lm.label.toLowerCase())}` : (IS_TOUCH ? 'Toca el modelo para colocar el punto' : 'Haz clic en el modelo para colocar el punto')}</button>
         <div class="btn-row"><button class="btn btn-small" type="button" id="reset-view">Restablecer vista</button></div>
       </div>`}
     ${CONFIG.showDebug ? `<div class="section"><label class="check"><input type="checkbox" id="show-coords" ${state.showCoords ? 'checked' : ''}> <span>Mostrar coordenadas (modo de prueba)</span></label></div>` : ''}`;
@@ -1616,7 +1778,8 @@
         const s = st.steps[l.key], h = s.hit;
         return {
           row_id: `${r.code}_s${r.session}_${item.code}_${l.id}`,
-          rater_code: r.code, group: r.group, session: r.session, device: r.device, experience_years: r.experience,
+          rater_code: r.code, rater_name: r.name, group: r.group, session: r.session, device: r.device, device_auto: r.device_auto, experience_years: r.experience,
+          pointer_type: s.pointerType, pointer_types_used: (s.pointerTypes || []).join('|'),
           model_code: item.code, model_hash: item.hash, model_order: order, practice: item.practice,
           landmark: l.key,
           x: h.point.x, y: h.point.y, z: h.point.z,
@@ -1658,7 +1821,7 @@
     }
 
     /* ── Pantalla 3: fin ────────────────────────────────────────────────── */
-    const CSV_COLS = ['row_id', 'rater_code', 'group', 'session', 'device', 'experience_years', 'model_order', 'practice', 'model_code', 'model_hash', 'landmark', 'x', 'y', 'z', 'nx', 'ny', 'nz', 'face_index', 'face_v0', 'face_v1', 'face_v2', 'bary_0', 'bary_1', 'bary_2', 'nearest_vertex', 'vx', 'vy', 'vz', 'time_to_first_click_s', 'time_to_confirm_s', 'n_placements', 'n_view_resets', 'n_view_interactions', 'cam_px', 'cam_py', 'cam_pz', 'cam_tx', 'cam_ty', 'cam_tz', 'cam_dist', 'cam_fov', 'viewport_w', 'viewport_h', 'dpr', 'model_started_at', 'saved_at', 'app_version'];
+    const CSV_COLS = ['row_id', 'rater_code', 'rater_name', 'group', 'session', 'device', 'device_auto', 'pointer_type', 'pointer_types_used', 'experience_years', 'model_order', 'practice', 'model_code', 'model_hash', 'landmark', 'x', 'y', 'z', 'nx', 'ny', 'nz', 'face_index', 'face_v0', 'face_v1', 'face_v2', 'bary_0', 'bary_1', 'bary_2', 'nearest_vertex', 'vx', 'vy', 'vz', 'time_to_first_click_s', 'time_to_confirm_s', 'n_placements', 'n_view_resets', 'n_view_interactions', 'cam_px', 'cam_py', 'cam_pz', 'cam_tx', 'cam_ty', 'cam_tz', 'cam_dist', 'cam_fov', 'viewport_w', 'viewport_h', 'dpr', 'model_started_at', 'saved_at', 'app_version'];
     function toCSV(rows) {
       const cell = (v) => {if (v === null || v === undefined) return ''; const s = typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toPrecision(10)) : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;};
       return [CSV_COLS.join(','), ...rows.map((r) => CSV_COLS.map((c) => cell(r[c])).join(','))].join('\n');
