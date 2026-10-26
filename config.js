@@ -91,7 +91,7 @@ window.SIV_CONFIG = {
     steps: [
       "El <b>sellion</b> y los dos <b>tragiones</b> fijan un plano de referencia en cada cabeza.",
       "Paralelos a ese plano se trazan niveles que dividen en diez partes iguales la altura del cráneo por encima de él.",
-      "Por convención en la literatura, el CVAI se mide en el <b>tercer nivel</b> (nivel estándar de medición), con las diagonales orientadas según la dirección del sellion.",
+      "Por convención, el CVAI se mide en el <b>tercer nivel</b> (nivel estándar de medición), con las diagonales orientadas según la dirección del sellion.",
     ],
     closing: [
       "Por eso la posición de cada punto importa: un desplazamiento pequeño inclina el plano de referencia, mueve el nivel de medición y cambia el valor del CVAI. Este estudio mide cuánto varía la colocación de estos puntos entre personas y en una misma persona, para conocer la incertidumbre real del índice.",
