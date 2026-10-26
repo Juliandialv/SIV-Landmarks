@@ -16,12 +16,12 @@ window.SIV_CONFIG = {
   // si los rellenas aquí, la persona ya no tiene que indicarlos en el formulario.
   // Si dejas la lista vacía ( observers: [], ) se vuelve a pedir un código escrito.
   observers: [
-    { code: "OBS01", name: "Nombre Apellido 1", profile: "clinico" },
-    { code: "OBS02", name: "Nombre Apellido 2", profile: "clinico" },
-    { code: "OBS03", name: "Nombre Apellido 3", profile: "clinico" },
-    { code: "OBS04", name: "Nombre Apellido 4", profile: "no_especialista" },
-    { code: "OBS05", name: "Nombre Apellido 5", profile: "no_especialista" },
-    { code: "OBS06", name: "Nombre Apellido 6", profile: "no_especialista" },
+    { code: "OBS01", name: "Jose Antonio Fidalgo", profile: "clinico" },
+    { code: "OBS02", name: "Elena Fernández", profile: "clinico" },
+    { code: "OBS03", name: "Pablo Zapico", profile: "no_especialista" },
+    { code: "OBS04", name: "Natalia Beltrán", profile: "no_especialista" },
+    { code: "OBS05", name: "David Blanco", profile: "no_especialista" },
+    { code: "OBS06", name: "Julián Álvarez", profile: "no_especialista" },
   ],
 
   // ── Comportamiento ──────────────────────────────────────────────────────
@@ -78,6 +78,28 @@ window.SIV_CONFIG = {
   // Para obtener el tuyo: pon showDebug: true, haz el modelo de práctica, marca el punto
   // y activa "Mostrar coordenadas": el número tras la "v" es el índice del vértice.
   referencePoints: { sellion: 4844, tragion_der: 39172, tragion_izq: 64398 },
+
+  // ── Ventana "Objetivo del estudio" (aparece antes de las instrucciones) ──
+  // Todo es opcional: si borras una clave, se usa el texto por defecto.
+  // Admite <b>negrita</b> y <sub>subíndices</sub>. imageLeft / imageRight: ruta a una imagen propia.
+  intro: {
+    title: "Para qué sirven estos tres puntos",
+    paragraphs: [
+      "El <b>índice de asimetría de la bóveda craneal (CVAI)</b> cuantifica la plagiocefalia comparando las dos diagonales de un corte transversal del cráneo, trazadas a ±30° del eje anteroposterior (D<sub>A</sub> y D<sub>B</sub>): cuanto más difieren, más asimétrico es el cráneo.",
+      "Para que ese corte sea comparable entre cabezas hace falta un sistema de referencia propio de cada una. Los tres puntos que vas a marcar lo definen:",
+    ],
+    steps: [
+      "El <b>sellion</b> y los dos <b>tragiones</b> fijan un plano de referencia en cada cabeza.",
+      "Paralelos a ese plano se trazan niveles que dividen en diez partes iguales la altura del cráneo por encima de él.",
+      "Por convención en la literatura, el CVAI se mide en el <b>tercer nivel</b> (nivel estándar de medición), con las diagonales orientadas según la dirección del sellion.",
+    ],
+    closing: [
+      "Por eso la posición de cada punto importa: un desplazamiento pequeño inclina el plano de referencia, mueve el nivel de medición y cambia el valor del CVAI. Este estudio mide cuánto varía la colocación de estos puntos entre personas y en una misma persona, para conocer la incertidumbre real del índice.",
+      "No tienes que calcular nada: solo marca cada punto con el mayor cuidado posible, según tu propio criterio.",
+    ],
+    captionLeft: "Sellion, tragion derecho y niveles craneales sobre la bóveda reconstruida. El nivel estándar de medición es paralelo al plano definido por los tres puntos.",
+    captionRight: "Corte en el nivel de medición, con las diagonales D<sub>A</sub> y D<sub>B</sub> a ±30° usadas para calcular el CVAI.",
+  },
 
   // ── Lista "Cómo trabajar" de la pantalla de instrucciones ──────────────
   // Una línea por punto. {pausa} se sustituye por el valor de pauseEvery.
