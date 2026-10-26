@@ -8,7 +8,7 @@ window.SIV_CONFIG = {
   endpoint: "https://script.google.com/macros/s/AKfycbxy54D1TlqwiLHgGCgKndxxwYCVPS8B3mZaVNmDh8BZ-e6Z5TOnAEAKLlboIh7UKvp1/exec",
   // La misma clave que escribiste en TOKEN dentro de Code.gs
   token: "siv-landmark-calibration-1578",
-  studyId: "estudio-1",
+  studyId: "estudio-definitivo",
 
   // ── Observadores ────────────────────────────────────────────────────────
   // Aparecen en un desplegable al entrar. "code" es el identificador que se guarda
