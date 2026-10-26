@@ -1028,7 +1028,7 @@
   <script>
     // Carga config.js saltándose la caché, para que los cambios se vean al recargar.
     window.__sivConfigError = null;
-    window.addEventListener('error', function (e) {if (e.filename && e.filename.indexOf('config.js') >= 0) window.__sivConfigError = (e.message || 'error') + ' (línea ' + e.lineno + ')';});
+    window.addEventListener('error', function (e) { if (e.filename && e.filename.indexOf('config.js') >= 0) window.__sivConfigError = (e.message || 'error') + ' (línea ' + e.lineno + ')'; });
     document.write('<script src="config.js?v=' + Date.now() + '"><\/script>');
   </script>
   <script type="importmap">
@@ -1043,23 +1043,23 @@
 
   <script type="module">
     import * as THREE from 'three';
-    import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    const APP_VERSION = '0.5.2';
-    const CONFIG = Object.assign({endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null, observers: [], referencePoints: null, intro: {}}, window.SIV_CONFIG || {});
+    const APP_VERSION = '0.5.3';
+    const CONFIG = Object.assign({ endpoint: '', token: '', pauseEvery: 15, showDebug: false, manifest: 'manifest.json', views: {}, landmarks: {}, instructions: null, observers: [], referencePoints: null, intro: {}, studyId: 'estudio-1' }, window.SIV_CONFIG || {});
     /* Encuadre inicial de cada vista. zoom: 1 = cabeza completa en pantalla; 2 = el doble de cerca.
        center: punto al que mira la cámara, en fracciones de la caja del modelo (0 = mínimo, 1 = máximo) en X (anterior), Y (izquierda), Z (superior).
        Se pueden sobrescribir desde config.js (views.sellion / views.tragion). */
     const VIEW_SETTINGS = {
-      sellion: Object.assign({zoom: 1.25, center: [0.5, 0.5, 0.48]}, CONFIG.views.sellion || {}),
-      tragion: Object.assign({zoom: 1.45, center: [0.42, 0.5, 0.42]}, CONFIG.views.tragion || {}),
+      sellion: Object.assign({ zoom: 1.25, center: [0.5, 0.5, 0.48] }, CONFIG.views.sellion || {}),
+      tragion: Object.assign({ zoom: 1.45, center: [0.42, 0.5, 0.42] }, CONFIG.views.tragion || {}),
     };
     const DEMO_KEY = 'DEMO';
     const OBSERVERS = (Array.isArray(CONFIG.observers) ? CONFIG.observers : [])
       .filter((o) => o && o.code && o.name)
-      .map((o) => ({code: String(o.code).trim().toUpperCase(), name: String(o.name), profile: o.profile || null, experience: Number.isFinite(Number(o.experience)) && o.experience !== '' && o.experience !== null ? Number(o.experience) : null}));
+      .map((o) => ({ code: String(o.code).trim().toUpperCase(), name: String(o.name), profile: o.profile || null, experience: Number.isFinite(Number(o.experience)) && o.experience !== '' && o.experience !== null ? Number(o.experience) : null }));
     /* Vértice (índice 0-based del OBJ demo) donde se marca cada landmark en las imágenes de referencia */
-    const REF_POINTS = Object.assign({sellion: 4844, tragion_der: 39172, tragion_izq: 64398}, CONFIG.referencePoints || {});
+    const REF_POINTS = Object.assign({ sellion: 4844, tragion_der: 39172, tragion_izq: 64398 }, CONFIG.referencePoints || {});
     const DEVICES = [
       ['ordenador_raton', 'Ordenador con ratón'],
       ['ordenador_trackpad', 'Ordenador con trackpad (panel táctil)'],
@@ -1072,7 +1072,7 @@
       const small = Math.min(screen.width, screen.height);
       let auto = 'ordenador';
       if (coarse && !fine) auto = small < 600 ? 'movil' : 'tablet';
-      return {auto, fine, coarse, touchPoints: navigator.maxTouchPoints || 0};
+      return { auto, fine, coarse, touchPoints: navigator.maxTouchPoints || 0 };
     }
     const DEVICE_INFO = detectDevice();
     const IS_TOUCH = DEVICE_INFO.coarse && !DEVICE_INFO.fine;
@@ -1087,25 +1087,25 @@
       THREE.BufferGeometry.prototype.computeBoundsTree = BVH.computeBoundsTree;
       THREE.BufferGeometry.prototype.disposeBoundsTree = BVH.disposeBoundsTree;
       THREE.Mesh.prototype.raycast = BVH.acceleratedRaycast;
-    } catch (e) {console.warn('BVH no disponible; se usa raycasting estándar', e);}
+    } catch (e) { console.warn('BVH no disponible; se usa raycasting estándar', e); }
 
     /* ── Landmarks (claves compatibles con el pipeline Python) ──────────── */
     const LANDMARKS = [
       {
         key: 'sellion', id: 'sellion', label: 'Sellion', view: 'anterior', viewLabel: 'Vista frontal',
-        color: '--lm-sellion', symbol: 'sym-profile', marker: {x: 123, y: 78},
+        color: '--lm-sellion', symbol: 'sym-profile', marker: { x: 123, y: 78 },
         def: 'Punto más profundo del ángulo nasofrontal, en la línea media, donde la frente se une con el dorso de la nariz.',
         tip: 'Si te ayuda, gira el modelo de perfil para ver mejor la concavidad.',
       },
       {
         key: 'right tragion', id: 'tragion_der', label: 'Tragion derecho', view: 'right', viewLabel: 'Vista lateral derecha del paciente',
-        color: '--lm-right', symbol: 'sym-ear', marker: {x: 91, y: 92}, mirror: false,
+        color: '--lm-right', symbol: 'sym-ear', marker: { x: 91, y: 92 }, mirror: false,
         def: 'Punto en la escotadura situada justo por encima del trago de la oreja derecha del paciente.',
         tip: 'Derecha se refiere siempre al paciente, no a tu pantalla. La cara queda a la derecha de la imagen.',
       },
       {
         key: 'left tragion', id: 'tragion_izq', label: 'Tragion izquierdo', view: 'left', viewLabel: 'Vista lateral izquierda del paciente',
-        color: '--lm-left', symbol: 'sym-ear', marker: {x: 91, y: 92}, mirror: true,
+        color: '--lm-left', symbol: 'sym-ear', marker: { x: 91, y: 92 }, mirror: true,
         def: 'Punto en la escotadura situada justo por encima del trago de la oreja izquierda del paciente.',
         tip: 'Izquierda se refiere al paciente. En esta vista la cara queda a la izquierda de la imagen.',
       },
@@ -1115,11 +1115,11 @@
       for (const k of ['label', 'viewLabel', 'def', 'tip']) if (typeof t[k] === 'string' && t[k].trim()) lm[k] = t[k];
     }
     /* Convención del pipeline SIV: X anterior, Y izquierda del paciente, Z superior */
-    const VIEW_DIRS = {overview: [1, 0, 0], anterior: [1, 0, 0], right: [0, -1, 0], left: [0, 1, 0]};
+    const VIEW_DIRS = { overview: [1, 0, 0], anterior: [1, 0, 0], right: [0, -1, 0], left: [0, 1, 0] };
 
     const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     const $ = (id) => document.getElementById(id);
-    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const fmt = (n, d = 2) => (Number.isFinite(n) ? n.toFixed(d) : '');
 
     function lmSvg(lm, size = 'card') {
@@ -1141,18 +1141,32 @@
     }
     function seededRandom(seedStr) {
       let h = 1779033703 ^ seedStr.length;
-      for (let i = 0; i < seedStr.length; i++) {h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19);}
+      for (let i = 0; i < seedStr.length; i++) { h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
       let a = h >>> 0;
-      return () => {a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296;};
+      return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
     }
-    function shuffle(arr, rnd) {const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) {const j = Math.floor(rnd() * (i + 1));[a[i], a[j]] = [a[j], a[i]];} return a;}
+    function shuffle(arr, rnd) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
     const store = {
-      get(k) {try {const v = localStorage.getItem(k); return v ? JSON.parse(v) : null;} catch {return null;} },
-      set(k, v) {try {localStorage.setItem(k, JSON.stringify(v)); return true;} catch {return false;} },
-      del(k) {try {localStorage.removeItem(k);} catch { } },
+      get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+      del(k) { try { localStorage.removeItem(k); } catch { } },
     };
-    const progressKey = (code, session) => `sivlm:${code}:s${session}`;
-    const OUTBOX_KEY = 'sivlm:outbox';
+    /* Todo lo guardado en el navegador va bajo un prefijo con el identificador del estudio (config.js → studyId).
+       Al arrancar se borra cualquier dato de versiones anteriores o de otro studyId: progreso antiguo y
+       envíos pendientes de pruebas no se mezclan con el estudio real. */
+    const STUDY_ID = String(CONFIG.studyId || 'estudio-1').replace(/[^A-Za-z0-9_-]/g, '') || 'estudio-1';
+    const STORE_PREFIX = `sivlm:${STUDY_ID}:`;
+    try {
+      const old = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('sivlm:') && !k.startsWith(STORE_PREFIX)) old.push(k);
+      }
+      old.forEach((k) => localStorage.removeItem(k));
+      if (old.length) console.info(`Borrados ${old.length} datos locales de versiones o estudios anteriores`);
+    } catch { }
+    const progressKey = (code, session) => `${STORE_PREFIX}${code}:s${session}`;
+    const OUTBOX_KEY = `${STORE_PREFIX}outbox`;
 
     /* ── Carga de modelos desde el manifest ─────────────────────────────── */
     let MANIFEST = null;
@@ -1160,7 +1174,7 @@
     const modelCache = new Map();   // ruta -> Promise<{positions, hash}>
 
     async function fetchBin(path) {
-      const res = await fetch(path, {cache: 'force-cache'});
+      const res = await fetch(path, { cache: 'force-cache' });
       if (!res.ok) throw new Error(`No se pudo descargar ${path} (HTTP ${res.status}).`);
       if (path.endsWith('.b64.txt')) {   // variante en texto base64 (solo para alojamientos que no sirven binarios)
         const s = atob((await res.text()).trim());
@@ -1197,13 +1211,13 @@
       if (BVH) g.computeBoundsTree();
       return g;
     }
-    function prefetch(entry) {if (entry) {getPositions(entry).catch(() => { }); getFaces(entry.faces).catch(() => { });} }
+    function prefetch(entry) { if (entry) { getPositions(entry).catch(() => { }); getFaces(entry.faces).catch(() => { }); } }
 
     /* ── Visor 3D ───────────────────────────────────────────────────────── */
     class Viewer {
       constructor(el) {
         this.el = el;
-        this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setClearColor(0x000000, 0);
         el.prepend(this.renderer.domElement);
@@ -1217,13 +1231,13 @@
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true; this.controls.dampingFactor = 0.12;
         this.controls.zoomToCursor = true; this.controls.rotateSpeed = 0.8;
-        this.material = new THREE.MeshStandardMaterial({color: new THREE.Color(cssVar('--skin') || '#ddbfa4'), roughness: 0.62, metalness: 0.0, side: THREE.DoubleSide});
+        this.material = new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar('--skin') || '#ddbfa4'), roughness: 0.62, metalness: 0.0, side: THREE.DoubleSide });
         this.mesh = null; this.markers = new Map();
         this.raycaster = new THREE.Raycaster(); this.raycaster.firstHitOnly = true;
         this.hover = null;
         new ResizeObserver(() => this.resize()).observe(el);
         this.resize();
-        const loop = () => {this.controls.update(); this.renderer.render(this.scene, this.camera); requestAnimationFrame(loop);};
+        const loop = () => { this.controls.update(); this.renderer.render(this.scene, this.camera); requestAnimationFrame(loop); };
         loop();
       }
       resize() {
@@ -1236,7 +1250,7 @@
         for (const [k, m] of this.markers) m.material.color.set(cssVar(LANDMARKS.find((l) => l.key === k).color));
       }
       setGeometry(geom) {
-        if (this.mesh) {this.scene.remove(this.mesh); this.mesh.geometry.disposeBoundsTree?.(); this.mesh.geometry.dispose();}
+        if (this.mesh) { this.scene.remove(this.mesh); this.mesh.geometry.disposeBoundsTree?.(); this.mesh.geometry.dispose(); }
         this.clearMarkers();
         this.mesh = new THREE.Mesh(geom, this.material); // matriz identidad: coordenadas = coordenadas del archivo
         this.scene.add(this.mesh);
@@ -1251,7 +1265,7 @@
       setView(preset) {
         const d = new THREE.Vector3(...VIEW_DIRS[preset]);
         // Encuadre idéntico para todos los modelos y observadores; no depende de ningún landmark.
-        const vs = preset === 'overview' ? {zoom: 0.95, center: [0.5, 0.5, 0.5]} : (preset === 'anterior' ? VIEW_SETTINGS.sellion : VIEW_SETTINGS.tragion);
+        const vs = preset === 'overview' ? { zoom: 0.95, center: [0.5, 0.5, 0.5] } : (preset === 'anterior' ? VIEW_SETTINGS.sellion : VIEW_SETTINGS.tragion);
         const bb = this.mesh.geometry.boundingBox;
         const c = vs.center || [0.5, 0.5, 0.5];
         const target = new THREE.Vector3(bb.min.x + c[0] * this.size.x, bb.min.y + c[1] * this.size.y, bb.min.z + c[2] * this.size.z);
@@ -1278,13 +1292,13 @@
         const k = bv.indexOf(Math.max(...bv));
         const n = hit.face.normal.clone();
         if (n.dot(this.raycaster.ray.direction) > 0) n.negate();
-        return {point: hit.point.clone(), normal: n, faceIndex: hit.faceIndex, faceVerts: idx, bary: bv, nearestIndex: idx[k], nearest: verts[k]};
+        return { point: hit.point.clone(), normal: n, faceIndex: hit.faceIndex, faceVerts: idx, bary: bv, nearestIndex: idx[k], nearest: verts[k] };
       }
       setHover(hit, colorVar) {
-        if (!hit) {if (this.hover) this.hover.visible = false; return;}
+        if (!hit) { if (this.hover) this.hover.visible = false; return; }
         if (!this.hover) {
           const r = this.markerR;
-          this.hover = new THREE.Mesh(new THREE.RingGeometry(r * 1.1, r * 1.8, 40), new THREE.MeshBasicMaterial({transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false}));
+          this.hover = new THREE.Mesh(new THREE.RingGeometry(r * 1.1, r * 1.8, 40), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false }));
           this.scene.add(this.hover);
         }
         this.hover.material.color.set(cssVar(colorVar));
@@ -1292,20 +1306,20 @@
         this.hover.position.copy(hit.point).addScaledVector(hit.normal, this.markerR * 0.15);
         this.hover.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hit.normal);
       }
-      resetHover() {if (this.hover) {this.scene.remove(this.hover); this.hover.geometry.dispose(); this.hover = null;} }
+      resetHover() { if (this.hover) { this.scene.remove(this.hover); this.hover.geometry.dispose(); this.hover = null; } }
       setMarker(key, point) {
         let m = this.markers.get(key);
         if (!m) {
           const lm = LANDMARKS.find((l) => l.key === key);
-          m = new THREE.Mesh(new THREE.SphereGeometry(this.markerR, 24, 16), new THREE.MeshStandardMaterial({color: new THREE.Color(cssVar(lm.color)), roughness: 0.35, emissive: 0x111111}));
+          m = new THREE.Mesh(new THREE.SphereGeometry(this.markerR, 24, 16), new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar(lm.color)), roughness: 0.35, emissive: 0x111111 }));
           this.scene.add(m); this.markers.set(key, m);
         }
         m.position.copy(point);
       }
-      clearMarkers() {for (const m of this.markers.values()) {this.scene.remove(m); m.geometry.dispose(); m.material.dispose();} this.markers.clear(); this.resetHover();}
+      clearMarkers() { for (const m of this.markers.values()) { this.scene.remove(m); m.geometry.dispose(); m.material.dispose(); } this.markers.clear(); this.resetHover(); }
       cameraState() {
         const p = this.camera.position, t = this.controls.target;
-        return {pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], dist: p.distanceTo(t), fov: this.camera.fov};
+        return { pos: [p.x, p.y, p.z], target: [t.x, t.y, t.z], dist: p.distanceTo(t), fov: this.camera.fov };
       }
     }
 
@@ -1324,7 +1338,7 @@
 
     const viewer = new Viewer($('viewer'));
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => viewer.refreshTheme());
-    new MutationObserver(() => viewer.refreshTheme()).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+    new MutationObserver(() => viewer.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     /* ── Envío de datos: Google Sheets, base de datos del artifact o solo local ── */
     const backend = {
@@ -1336,8 +1350,8 @@
             const [db, user, downloads] = await Promise.all([window.claude.use('db'), window.claude.use('user'), window.claude.use('downloads')]);
             this.downloads = downloads;
             const uid = user ? await user.id() : null;
-            if (db && uid) {this.db = db; this.uid = uid; this.kind = 'claude';}
-          } catch (e) {console.warn('Capacidades no disponibles', e);}
+            if (db && uid) { this.db = db; this.uid = uid; this.kind = 'claude'; }
+          } catch (e) { console.warn('Capacidades no disponibles', e); }
         }
         updateSyncChip();
       },
@@ -1345,8 +1359,8 @@
         if (this.kind === 'sheets') {
           const res = await fetch(CONFIG.endpoint, {
             method: 'POST', redirect: 'follow',
-            headers: {'Content-Type': 'text/plain;charset=utf-8'},   // evita la comprobación CORS previa
-            body: JSON.stringify({token: CONFIG.token, action: 'append', ...payload}),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // evita la comprobación CORS previa
+            body: JSON.stringify({ token: CONFIG.token, action: 'append', ...payload }),
           });
           const out = await res.json();
           if (!out.ok) throw new Error(out.error || 'El servidor rechazó los datos');
@@ -1355,7 +1369,7 @@
         if (this.kind === 'claude') {
           const base = this.db.doc(`annotations/${this.uid}`);
           for (const s of payload.sessions) {
-            await base.set({last_rater_code: s.rater_code, updated_at: new Date().toISOString()});
+            await base.set({ last_rater_code: s.rater_code, updated_at: new Date().toISOString() });
             await base.collection('sessions').doc(s.session_id).set(s);
           }
           for (const r of payload.rows) await base.collection('rows').doc(r.row_id).set(r);
@@ -1368,7 +1382,7 @@
           const u = new URL(CONFIG.endpoint);
           u.searchParams.set('action', 'progress'); u.searchParams.set('token', CONFIG.token);
           u.searchParams.set('rater', code); u.searchParams.set('session', String(session));
-          const res = await fetch(u.toString(), {redirect: 'follow'});
+          const res = await fetch(u.toString(), { redirect: 'follow' });
           const out = await res.json();
           if (!out.ok) throw new Error(out.error || 'Error al consultar el progreso');
           return out.rows || [];
@@ -1384,15 +1398,15 @@
 
     /* Cola de salida: nada se da por enviado hasta que el servidor lo confirma */
     const outbox = {
-      items: store.get(OUTBOX_KEY) || {rows: [], sessions: []},
+      items: store.get(OUTBOX_KEY) || { rows: [], sessions: [] },
       sending: false, lastError: null,
-      save() {store.set(OUTBOX_KEY, this.items);},
-      add(rows = [], sessions = []) {this.items.rows.push(...rows); this.items.sessions.push(...sessions); this.save(); this.flush();},
-      get pending() {return this.items.rows.length;},
+      save() { store.set(OUTBOX_KEY, this.items); },
+      add(rows = [], sessions = []) { this.items.rows.push(...rows); this.items.sessions.push(...sessions); this.save(); this.flush(); },
+      get pending() { return this.items.rows.length; },
       async flush() {
-        if (this.sending || backend.kind === 'local' || (!this.items.rows.length && !this.items.sessions.length)) {updateSyncChip(); return;}
+        if (this.sending || backend.kind === 'local' || (!this.items.rows.length && !this.items.sessions.length)) { updateSyncChip(); return; }
         this.sending = true; updateSyncChip();
-        const batch = {rows: this.items.rows.slice(0, 60), sessions: this.items.sessions.slice()};
+        const batch = { rows: this.items.rows.slice(0, 60), sessions: this.items.sessions.slice() };
         try {
           const stored = new Set(await backend.send(batch));
           this.items.rows = this.items.rows.filter((r) => !stored.has(r.row_id));
@@ -1411,9 +1425,9 @@
 
     function updateSyncChip() {
       const chip = $('chip-sync'), txt = $('chip-sync-text');
-      if (backend.kind === 'local') {chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return;}
-      if (outbox.sending) {chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return;}
-      if (outbox.pending) {chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return;}
+      if (backend.kind === 'local') { chip.dataset.state = 'local'; txt.textContent = 'Sin servidor: guardado solo en este navegador'; return; }
+      if (outbox.sending) { chip.dataset.state = 'local'; txt.textContent = 'Enviando…'; return; }
+      if (outbox.pending) { chip.dataset.state = 'local'; txt.textContent = `${outbox.pending} anotaciones pendientes de envío`; return; }
       chip.dataset.state = 'ok'; txt.textContent = backend.kind === 'sheets' ? 'Servidor del estudio: todo enviado' : 'Copia en servidor: al día';
       if (state.screen === 'end') renderEnd();
     }
@@ -1422,7 +1436,7 @@
     /* ── Interacción en el visor ────────────────────────────────────────── */
     const canvas = viewer.renderer.domElement;
     let down = null, hoverQueued = false, lastMove = null;
-    canvas.addEventListener('pointerdown', (e) => {if (e.button === 0) down = {x: e.clientX, y: e.clientY, t: performance.now()};});
+    canvas.addEventListener('pointerdown', (e) => { if (e.button === 0) down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
     canvas.addEventListener('pointerup', (e) => {
       if (!down || e.button !== 0) return;
       const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
@@ -1440,11 +1454,11 @@
       });
     });
     canvas.addEventListener('pointerleave', () => viewer.setHover(null));
-    viewer.controls.addEventListener('start', () => {const st = state.current; if (state.screen === 'annotate' && st) st.steps[LANDMARKS[st.stepIdx].key].nInteractions++;});
+    viewer.controls.addEventListener('start', () => { const st = state.current; if (state.screen === 'annotate' && st) st.steps[LANDMARKS[st.stepIdx].key].nInteractions++; });
 
     window.addEventListener('beforeunload', (e) => {
       const st = state.current;
-      if (state.screen === 'annotate' && st && LANDMARKS.some((l) => st.steps[l.key].hit)) {e.preventDefault(); e.returnValue = '';}
+      if (state.screen === 'annotate' && st && LANDMARKS.some((l) => st.steps[l.key].hit)) { e.preventDefault(); e.returnValue = ''; }
     });
 
     function placeAt(x, y, pointerType) {
@@ -1468,14 +1482,14 @@
       $('view-swatch').style.background = lm ? `var(${lm.color})` : 'var(--muted)';
       $('view-tag-text').innerHTML = esc(text) + (sub ? ` <small>${esc(sub)}</small>` : '');
     }
-    function showReadout(text) {const r = $('readout'); r.hidden = !text; r.textContent = text || '';}
+    function showReadout(text) { const r = $('readout'); r.hidden = !text; r.textContent = text || ''; }
     async function showDemo(label = 'Modelo de práctica') {
       if (!MANIFEST) return;
       try {
         const g = await loadEntryGeometry(MANIFEST.demo);
         if (!Object.keys(REF_IMAGES).length) buildReferenceImages(g);
         viewer.setGeometry(g); viewer.setView('overview'); setViewTag(null, label);
-      } catch (e) {console.warn(e);}
+      } catch (e) { console.warn(e); }
     }
 
     /* ── Imágenes de referencia ─────────────────────────────────────────────
@@ -1495,7 +1509,7 @@
       let r;
       try {
         const W = 640, H = 480;
-        r = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+        r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
         r.setPixelRatio(1); r.setSize(W, H, false);
         r.setClearColor(new THREE.Color(cssVar('--viewer-bg') || '#c3ced2'), 1);
         const scene = new THREE.Scene();
@@ -1510,9 +1524,9 @@
         const diag = geom.boundingBox.getSize(new THREE.Vector3()).length();
         // Dirección desde la que se mira cada punto (X anterior, Y izquierda, Z superior) y distancia (× diagonal)
         const SHOT = {
-          sellion: {dir: [0.5, -0.85, 0.1], dist: 0.55},   // perfil derecho oblicuo: se ve el ángulo nasofrontal
-          tragion_der: {dir: [0.15, -1, 0.1], dist: 0.42},
-          tragion_izq: {dir: [0.15, 1, 0.1], dist: 0.42},
+          sellion: { dir: [0.5, -0.85, 0.1], dist: 0.55 },   // perfil derecho oblicuo: se ve el ángulo nasofrontal
+          tragion_der: { dir: [0.15, -1, 0.1], dist: 0.42 },
+          tragion_izq: { dir: [0.15, 1, 0.1], dist: 0.42 },
         };
         for (const lm of LANDMARKS) {
           const idx = Number(REF_POINTS[lm.id]);
@@ -1521,8 +1535,8 @@
           const d = new THREE.Vector3(...SHOT[lm.id].dir).normalize();
           const color = new THREE.Color(cssVar(lm.color));
           const rad = diag * 0.0055;
-          const dot = new THREE.Mesh(new THREE.SphereGeometry(rad, 24, 16), new THREE.MeshStandardMaterial({color, roughness: 0.35, emissive: 0x111111}));
-          const ring = new THREE.Mesh(new THREE.RingGeometry(rad * 2.0, rad * 2.9, 48), new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.95, depthTest: false}));
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(rad, 24, 16), new THREE.MeshStandardMaterial({ color, roughness: 0.35, emissive: 0x111111 }));
+          const ring = new THREE.Mesh(new THREE.RingGeometry(rad * 2.0, rad * 2.9, 48), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, depthTest: false }));
           dot.position.copy(p); scene.add(dot);
           cam.position.copy(p).addScaledVector(d, diag * SHOT[lm.id].dist); cam.lookAt(p);
           ring.position.copy(p); ring.quaternion.copy(cam.quaternion); scene.add(ring);
@@ -1531,8 +1545,8 @@
           scene.remove(dot, ring);
           dot.geometry.dispose(); dot.material.dispose(); ring.geometry.dispose(); ring.material.dispose();
         }
-      } catch (e) {console.warn('No se pudieron generar las imágenes de referencia', e);}
-      finally {try {r?.dispose(); r?.forceContextLoss();} catch { } }
+      } catch (e) { console.warn('No se pudieron generar las imágenes de referencia', e); }
+      finally { try { r?.dispose(); r?.forceContextLoss(); } catch { } }
     }
 
     /* ── Pantalla 1: preparación ────────────────────────────────────────── */
@@ -1573,15 +1587,15 @@
       <small class="muted">Se descargan unos ${mb} MB a lo largo de la sesión.</small>
     </div>`;
       $('f-group').addEventListener('change', syncProfileFields);
-      $('f-code').addEventListener(OBSERVERS.length ? 'change' : 'input', () => {syncProfileFields(); updateResumeNote();});
+      $('f-code').addEventListener(OBSERVERS.length ? 'change' : 'input', () => { syncProfileFields(); updateResumeNote(); });
       syncProfileFields();
       $('f-session').addEventListener('change', updateResumeNote);
-      $('f-device').addEventListener('change', () => {$('setup-error').textContent = '';});
+      $('f-device').addEventListener('change', () => { $('setup-error').textContent = ''; });
       $('go-tutorial').addEventListener('click', submitSetup);
       updateResumeNote();
     }
 
-    function observerFor(code) {return OBSERVERS.find((o) => o.code === code) || null;}
+    function observerFor(code) { return OBSERVERS.find((o) => o.code === code) || null; }
     /* Si el observador tiene perfil o experiencia fijados en config.js, se ocultan esos campos */
     /* Con lista de observadores: no se muestra nada hasta elegir un nombre.
        El perfil sale de config.js (si está); los años de experiencia los escribe siempre
@@ -1612,7 +1626,7 @@
       };
     }
     function updateResumeNote() {
-      const {code, session} = readSetup();
+      const { code, session } = readSetup();
       const note = $('resume-note');
       const prev = /^[A-Z0-9_-]{2,20}$/.test(code) ? store.get(progressKey(code, session)) : null;
       const n = prev?.doneHashes?.filter((h) => h !== DEMO_KEY).length || 0;
@@ -1623,16 +1637,16 @@
       const r = readSetup();
       const err = $('setup-error');
       err.textContent = '';
-      if (OBSERVERS.length && !observerFor(r.code)) {err.textContent = 'Elige tu nombre en la lista de observadores.'; $('f-code').focus(); return;}
-      if (!/^[A-Z0-9_-]{2,20}$/.test(r.code)) {err.textContent = 'Escribe un código de observador de 2 a 20 caracteres (letras, números, guion o guion bajo).'; $('f-code').focus(); return;}
-      if (!r.device) {err.textContent = 'Indica qué dispositivo estás usando.'; $('f-device').focus(); return;}
-      if (r.group === 'clinico' && (r.experience === null || !(r.experience >= 0 && r.experience <= 60))) {err.textContent = 'Indica los años de experiencia clínica (0 si estás empezando).'; $('f-exp').focus(); return;}
+      if (OBSERVERS.length && !observerFor(r.code)) { err.textContent = 'Elige tu nombre en la lista de observadores.'; $('f-code').focus(); return; }
+      if (!/^[A-Z0-9_-]{2,20}$/.test(r.code)) { err.textContent = 'Escribe un código de observador de 2 a 20 caracteres (letras, números, guion o guion bajo).'; $('f-code').focus(); return; }
+      if (!r.device) { err.textContent = 'Indica qué dispositivo estás usando.'; $('f-device').focus(); return; }
+      if (r.group === 'clinico' && (r.experience === null || !(r.experience >= 0 && r.experience <= 60))) { err.textContent = 'Indica los años de experiencia clínica (0 si estás empezando).'; $('f-exp').focus(); return; }
       state.rater = r; state.practice = $('f-practice').checked;
 
       const btn = $('go-tutorial'); btn.disabled = true; btn.textContent = 'Comprobando el progreso guardado…';
-      const local = store.get(progressKey(r.code, r.session)) || {records: [], doneHashes: []};
-      let remote = [];
-      try {remote = await backend.progress(r.code, r.session);}
+      const local = store.get(progressKey(r.code, r.session)) || { records: [], doneHashes: [] };
+      let remote = [], remoteOk = false;
+      try { remote = await backend.progress(r.code, r.session); remoteOk = backend.kind !== 'local'; }
       catch (e) {
         console.warn(e);
         if (backend.kind === 'sheets' && !local.records.length) {
@@ -1643,30 +1657,33 @@
       }
       btn.disabled = false; btn.textContent = 'Continuar a las instrucciones';
 
-      // Unión de lo guardado aquí, en el servidor y lo pendiente de envío. Un modelo cuenta si tiene sus tres landmarks.
+      // Si el servidor ha respondido, manda el servidor (más lo que aún está pendiente de envío desde aquí):
+      // así, borrar filas en la hoja basta para que esos modelos se vuelvan a pedir.
+      // La copia local solo se usa si no hay conexión o no hay servidor configurado.
       const byId = new Map();
       const pend = outbox.items.rows.filter((x) => x.rater_code === r.code && x.session === r.session);
-      for (const row of [...(local.records || []), ...remote, ...pend]) byId.set(row.row_id, row);
+      const base = remoteOk ? remote : [...(local.records || []), ...remote];
+      for (const row of [...base, ...pend]) byId.set(row.row_id, row);
       const counts = {};
       for (const row of byId.values()) counts[row.model_hash] = (counts[row.model_hash] || 0) + 1;
       state.doneHashes = Object.keys(counts).filter((h) => counts[h] >= LANDMARKS.length);
       state.records = [...byId.values()].filter((row) => state.doneHashes.includes(row.model_hash));
-      store.set(progressKey(r.code, r.session), {records: state.records, doneHashes: state.doneHashes});
+      store.set(progressKey(r.code, r.session), { records: state.records, doneHashes: state.doneHashes });
 
       const rnd = seededRandom(`${r.code}|s${r.session}`);
       const order = shuffle(MANIFEST.models.map((m) => m.code).sort(), rnd);
       state.queue = [];
       const demoDone = state.records.some((x) => x.model_code === DEMO_KEY);
-      if (state.practice && !demoDone) state.queue.push({entry: MANIFEST.demo, code: DEMO_KEY, hash: MANIFEST.demo.sha256_bin, practice: true});
+      if (state.practice && !demoDone) state.queue.push({ entry: MANIFEST.demo, code: DEMO_KEY, hash: MANIFEST.demo.sha256_bin, practice: true });
       order.forEach((code, i) => {
         const m = MANIFEST.models.find((x) => x.code === code);
-        if (!state.doneHashes.includes(m.sha256_bin)) state.queue.push({entry: m, code, hash: m.sha256_bin, practice: false, order: i + 1});
+        if (!state.doneHashes.includes(m.sha256_bin)) state.queue.push({ entry: m, code, hash: m.sha256_bin, practice: false, order: i + 1 });
       });
       state.totalReal = MANIFEST.models.length;
       state.qi = 0;
       const chip = $('chip-rater'); chip.hidden = false;
       chip.innerHTML = `<b>${esc(r.name || r.code)}</b> sesión ${r.session}`;
-      outbox.add([], [{session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, rater_name: r.name, session: r.session, group: r.group, device: r.device, device_auto: r.device_auto, pointer_fine: DEVICE_INFO.fine, touch_points: DEVICE_INFO.touchPoints, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}`}]);
+      outbox.add([], [{ session_id: `${r.code}_s${r.session}_${Date.now()}`, rater_code: r.code, rater_name: r.name, session: r.session, group: r.group, device: r.device, device_auto: r.device_auto, pointer_fine: DEVICE_INFO.fine, touch_points: DEVICE_INFO.touchPoints, experience_years: r.experience, n_models: state.totalReal, n_done_at_start: state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length, started_at: new Date().toISOString(), app_version: APP_VERSION, user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio}` }]);
       prefetch(state.queue[0]?.entry); prefetch(state.queue[1]?.entry);
       if (!state.queue.length) return renderEnd();
       openIntro();
@@ -1725,8 +1742,8 @@
       <button class="btn btn-primary" type="button" id="intro-next">Continuar a las instrucciones</button>
     </div>`;
       $('overlay').hidden = false;
-      $('intro-next').focus({preventScroll: true}); $('dialog').scrollTop = 0;
-      $('intro-back').addEventListener('click', () => {$('overlay').hidden = true; renderSetup();});
+      $('intro-next').focus({ preventScroll: true }); $('dialog').scrollTop = 0;
+      $('intro-back').addEventListener('click', () => { $('overlay').hidden = true; renderSetup(); });
       $('intro-next').addEventListener('click', () => openTutorial());
     }
 
@@ -1778,9 +1795,9 @@
       <button class="btn btn-primary" type="button" id="tut-start">${state.queue[0]?.practice ? 'Empezar con el modelo de práctica' : (resumed ? 'Continuar la anotación' : 'Empezar la anotación')}</button>
     </div>`;
       $('overlay').hidden = false;
-      $('tut-start').focus({preventScroll: true}); $('dialog').scrollTop = 0;
+      $('tut-start').focus({ preventScroll: true }); $('dialog').scrollTop = 0;
       $('tut-back').addEventListener('click', () => openIntro());
-      $('tut-start').addEventListener('click', () => {$('overlay').hidden = true; loadQueueItem();});
+      $('tut-start').addEventListener('click', () => { $('overlay').hidden = true; loadQueueItem(); });
     }
 
     /* ── Pantalla 2: anotación ──────────────────────────────────────────── */
@@ -1789,24 +1806,24 @@
       const item = state.queue[state.qi];
       state.screen = 'annotate';
       state.current = null;
-      try {window.scrollTo({top: 0, behavior: 'instant'});} catch {window.scrollTo(0, 0);}   // en móvil, que el visor quede a la vista
+      try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }   // en móvil, que el visor quede a la vista
       $('viewer').dataset.mode = 'annotate';
       $('viewer-loading').hidden = false;
       showReadout(null);
       let geom;
-      try {geom = await loadEntryGeometry(item.entry);}
+      try { geom = await loadEntryGeometry(item.entry); }
       catch (e) {
         $('viewer-loading').hidden = true;
         $('panel').innerHTML = `<div class="section"><h2>No se pudo abrir el modelo</h2><p>${esc(e.message)}</p><div class="btn-row"><button class="btn btn-primary" id="retry" type="button">Reintentar</button></div></div>`;
-        $('retry').onclick = () => {modelCache.delete(item.entry.file); facesCache.delete(item.entry.faces); loadQueueItem();};
+        $('retry').onclick = () => { modelCache.delete(item.entry.file); facesCache.delete(item.entry.faces); loadQueueItem(); };
         return;
       }
       viewer.setGeometry(geom);
       $('viewer-loading').hidden = true;
       prefetch(state.queue[state.qi + 1]?.entry);
       const steps = {};
-      for (const lm of LANDMARKS) steps[lm.key] = {confirmed: false, hit: null, tShown: null, tFirst: null, tConfirm: null, nPlacements: 0, nViewResets: 0, nInteractions: 0, camera: null, viewport: null};
-      state.current = {item, steps, stepIdx: 0, startedAt: new Date().toISOString()};
+      for (const lm of LANDMARKS) steps[lm.key] = { confirmed: false, hit: null, tShown: null, tFirst: null, tConfirm: null, nPlacements: 0, nViewResets: 0, nInteractions: 0, camera: null, viewport: null };
+      state.current = { item, steps, stepIdx: 0, startedAt: new Date().toISOString() };
       goToStep(0);
     }
 
@@ -1820,7 +1837,7 @@
       renderAnnotate();
     }
 
-    function realDoneCount() {return state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length;}
+    function realDoneCount() { return state.doneHashes.filter((h) => h !== MANIFEST.demo.sha256_bin).length; }
 
     function renderAnnotate() {
       const st = state.current; if (!st) return;
@@ -1867,11 +1884,11 @@
         s.confirmed = true; s.tConfirm = performance.now();
         viewer.setHover(null);
         const next = LANDMARKS.findIndex((l) => !st.steps[l.key].confirmed);
-        if (next >= 0) goToStep(next); else {setViewTag(null, 'Tres landmarks confirmados'); renderAnnotate();}
+        if (next >= 0) goToStep(next); else { setViewTag(null, 'Tres landmarks confirmados'); renderAnnotate(); }
       });
-      $('reset-view')?.addEventListener('click', () => {s.nViewResets++; viewer.setView(lm.view);});
+      $('reset-view')?.addEventListener('click', () => { s.nViewResets++; viewer.setView(lm.view); });
       $('save-model')?.addEventListener('click', saveModel);
-      $('show-coords')?.addEventListener('change', (e) => {state.showCoords = e.target.checked; updateCoords();});
+      $('show-coords')?.addEventListener('change', (e) => { state.showCoords = e.target.checked; updateCoords(); });
       updateCoords();
     }
 
@@ -1914,13 +1931,13 @@
       });
       state.records = state.records.filter((x) => !rows.some((y) => y.row_id === x.row_id)).concat(rows);
       state.doneHashes.push(item.hash);
-      store.set(progressKey(r.code, r.session), {records: state.records, doneHashes: state.doneHashes});
+      store.set(progressKey(r.code, r.session), { records: state.records, doneHashes: state.doneHashes });
       outbox.add(rows);
       viewer.clearMarkers();
       state.current = null;
       state.qi++;
       if (!item.practice) state.modelsSinceBreak++;
-      if (state.qi < state.queue.length && state.modelsSinceBreak >= CONFIG.pauseEvery) {state.modelsSinceBreak = 0; return openPause();}
+      if (state.qi < state.queue.length && state.modelsSinceBreak >= CONFIG.pauseEvery) { state.modelsSinceBreak = 0; return openPause(); }
       loadQueueItem();
     }
 
@@ -1932,13 +1949,13 @@
     <p>Descansa la vista unos minutos antes de seguir. Todo lo anotado hasta ahora está guardado; si cierras la página, al volver con el mismo código y sesión continuarás desde aquí.</p>
     <div class="btn-row"><button class="btn btn-primary" id="resume" type="button">Seguir anotando</button></div>`;
       $('overlay').hidden = false; $('resume').focus();
-      $('resume').addEventListener('click', () => {$('overlay').hidden = true; loadQueueItem();});
+      $('resume').addEventListener('click', () => { $('overlay').hidden = true; loadQueueItem(); });
     }
 
     /* ── Pantalla 3: fin ────────────────────────────────────────────────── */
     const CSV_COLS = ['row_id', 'rater_code', 'rater_name', 'group', 'session', 'device', 'device_auto', 'pointer_type', 'pointer_types_used', 'experience_years', 'model_order', 'practice', 'model_code', 'model_hash', 'landmark', 'x', 'y', 'z', 'nx', 'ny', 'nz', 'face_index', 'face_v0', 'face_v1', 'face_v2', 'bary_0', 'bary_1', 'bary_2', 'nearest_vertex', 'vx', 'vy', 'vz', 'time_to_first_click_s', 'time_to_confirm_s', 'n_placements', 'n_view_resets', 'n_view_interactions', 'cam_px', 'cam_py', 'cam_pz', 'cam_tx', 'cam_ty', 'cam_tz', 'cam_dist', 'cam_fov', 'viewport_w', 'viewport_h', 'dpr', 'model_started_at', 'saved_at', 'app_version'];
     function toCSV(rows) {
-      const cell = (v) => {if (v === null || v === undefined) return ''; const s = typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toPrecision(10)) : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;};
+      const cell = (v) => { if (v === null || v === undefined) return ''; const s = typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toPrecision(10)) : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
       return [CSV_COLS.join(','), ...rows.map((r) => CSV_COLS.map((c) => cell(r[c])).join(','))].join('\n');
     }
 
@@ -1946,7 +1963,7 @@
       const first = state.screen !== 'end';
       state.screen = 'end';
       $('viewer').dataset.mode = 'preview';
-      if (first) {viewer.clearMarkers(); setViewTag(null, 'Sesión terminada');}
+      if (first) { viewer.clearMarkers(); setViewTag(null, 'Sesión terminada'); }
       const r = state.rater;
       const rows = state.records.slice().sort((a, b) => a.model_order - b.model_order || LANDMARKS.findIndex((l) => l.key === a.landmark) - LANDMARKS.findIndex((l) => l.key === b.landmark));
       const real = new Set(rows.filter((x) => !x.practice).map((x) => x.model_hash)).size;
@@ -1980,19 +1997,19 @@
       const base = `siv_landmarks_${r.code}_s${r.session}`;
       $('retry-send')?.addEventListener('click', () => outbox.flush());
       $('dl-csv').addEventListener('click', () => offerFile(`${base}.csv`, toCSV(rows)));
-      $('dl-json').addEventListener('click', () => offerFile(`${base}.json`, JSON.stringify({app_version: APP_VERSION, rater: r, exported_at: new Date().toISOString(), coordinate_convention: MANIFEST.coordinate_convention, records: rows}, null, 2)));
+      $('dl-json').addEventListener('click', () => offerFile(`${base}.json`, JSON.stringify({ app_version: APP_VERSION, rater: r, exported_at: new Date().toISOString(), coordinate_convention: MANIFEST.coordinate_convention, records: rows }, null, 2)));
     }
 
     async function offerFile(filename, data) {
       const fb = $('dl-fallback');
       fb.innerHTML = '';
       if (backend.downloads) {
-        try {await backend.downloads.save({filename, data}); return;}
-        catch (e) {if (e?.code === 'declined') return;}
+        try { await backend.downloads.save({ filename, data }); return; }
+        catch (e) { if (e?.code === 'declined') return; }
       } else {
         try {
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(new Blob([data], {type: 'text/plain'})); a.download = filename;
+          a.href = URL.createObjectURL(new Blob([data], { type: 'text/plain' })); a.download = filename;
           document.body.appendChild(a); a.click(); a.remove();
           return;
         } catch { }
@@ -2000,8 +2017,8 @@
       fb.innerHTML = `<p style="font-size:13px">Si la descarga no empieza, copia el contenido:</p><textarea class="export" id="export-text" readonly></textarea><button class="btn btn-small" type="button" id="copy">Copiar</button>`;
       $('export-text').value = data;
       $('copy').addEventListener('click', async () => {
-        try {await navigator.clipboard.writeText(data); $('copy').textContent = 'Copiado';}
-        catch {$('export-text').select(); $('copy').textContent = 'Texto seleccionado: usa Ctrl+C';}
+        try { await navigator.clipboard.writeText(data); $('copy').textContent = 'Copiado'; }
+        catch { $('export-text').select(); $('copy').textContent = 'Texto seleccionado: usa Ctrl+C'; }
       });
     }
 
@@ -2009,7 +2026,7 @@
     (async () => {
       $('viewer-loading').hidden = false;
       try {
-        const res = await fetch(CONFIG.manifest, {cache: 'no-cache'});
+        const res = await fetch(CONFIG.manifest, { cache: 'no-cache' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         MANIFEST = await res.json();
       } catch (e) {
@@ -2024,7 +2041,7 @@
       outbox.flush();
     })();
 
-    window.__siv = {state, viewer, outbox, backend, CONFIG};
+    window.__siv = { state, viewer, outbox, backend, CONFIG };
   </script>
 
 </body>

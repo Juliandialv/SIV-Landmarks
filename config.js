@@ -8,6 +8,7 @@ window.SIV_CONFIG = {
   endpoint: "https://script.google.com/macros/s/AKfycbxy54D1TlqwiLHgGCgKndxxwYCVPS8B3mZaVNmDh8BZ-e6Z5TOnAEAKLlboIh7UKvp1/exec",
   // La misma clave que escribiste en TOKEN dentro de Code.gs
   token: "siv-landmark-calibration-1578",
+  studyId: "estudio-1",
 
   // ── Observadores ────────────────────────────────────────────────────────
   // Aparecen en un desplegable al entrar. "code" es el identificador que se guarda
@@ -35,7 +36,7 @@ window.SIV_CONFIG = {
   //         Para el sellion, sube Z (p. ej. 0.52) si queda bajo en pantalla.
   // Cambia esto solo antes de empezar el estudio: todos los observadores deben ver el mismo encuadre.
   views: {
-    sellion: { zoom: 1.3,  center: [0.5, 0.5, 0.48] },
+    sellion: { zoom: 1.3, center: [0.5, 0.5, 0.48] },
     tragion: { zoom: 1.45, center: [0.42, 0.5, 0.42] },
   },
 
